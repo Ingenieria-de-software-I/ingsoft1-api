@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "start": "npm t",
+    "test": "ts-node test/index.ts",
+    "check-format": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
+    "@types/baretest": "^2.0.0",
+    "@types/node": "^18.14.2",
+    "baretest": "^2.0.0",
+    "dotenv": "^16.3.1",
+    "prettier": "2.8.4",
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "@types/nodemailer": "^6.4.13",
+    "googleapis": "^128.0.0",
+    "nodemailer": "^6.9.7"
+  }
+}

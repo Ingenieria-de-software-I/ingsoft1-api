@@ -1,0 +1,15 @@
+{% extends "emails/layout/layout.html" %}
+
+{% block content %}
+Mail para {{nombre|title}}.
+
+Corrector: {{corrector}}.
+
+{% if (nota_final > nota) %}
+Hola, este mail es para darles la devolución del {{examen}}. Tu nota es {{nota|as_grade_str}}, pero gracias a los puntos extra que te ganaste en los cuestionarios, tu nota final es {{nota_final|as_grade_str}}.
+{% else %}
+Hola, este mail es para darles la devolución del {{examen}}, tu nota es {{nota|as_grade_str}}.
+{% endif %}
+
+{{correcciones}}
+{% endblock %}
