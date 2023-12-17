@@ -1,23 +1,9 @@
-import dotenv from 'dotenv';
 import { google } from 'googleapis';
 import { marked } from 'marked';
-import nodemailer from 'nodemailer';
-import nunjucks from 'nunjucks';
+import { default as nodemailer } from 'nodemailer';
+import { default as nunjucks } from 'nunjucks';
 
-import { ContextNotaEjercicio, ContextNotaExamen, Options } from './types';
-
-dotenv.config();
-
-const env = nunjucks
-    .configure('templates')
-    .addFilter('md', marked.parse)
-    .addFilter('as_grade_str', (grade) => {
-        const grade_as_number = Number(grade);
-        if (Number.isNaN(grade_as_number)) {
-            return grade;
-        }
-        return grade_as_number.toFixed(2);
-    });
+import { Options } from '../types';
 
 const OAuth2 = google.auth.OAuth2;
 
@@ -62,20 +48,13 @@ export async function sendMail(to: string, options: Options) {
     return await transporter.sendMail({ to, ...options });
 }
 
-export function buildMailOptionsForNotaEjercicio(
-    context: ContextNotaEjercicio,
-): Options {
-    const subject = `Correción de ejercicio ${context.ejercicio} - Grupo ${context.grupo}`;
-    const text = env.render(`emails/notas_ejercicio_plain.html`, context);
-    const html = env.render(`emails/notas_ejercicio.html`, context);
-    return { subject, text, html };
-}
-
-export function buildMailOptionsForNotaExamen(
-    context: ContextNotaExamen,
-): Options {
-    const subject = `Corrección de ${context.examen} - Padrón ${context.padron}`;
-    const text = env.render(`emails/notas_examen_plain.html`, context);
-    const html = env.render(`emails/notas_examen.html`, context);
-    return { subject, text, html };
-}
+export const env = nunjucks
+    .configure('templates')
+    .addFilter('md', marked.parse)
+    .addFilter('as_grade_str', (grade) => {
+        const grade_as_number = Number(grade);
+        if (Number.isNaN(grade_as_number)) {
+            return grade;
+        }
+        return grade_as_number.toFixed(2);
+    });

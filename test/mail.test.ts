@@ -1,8 +1,8 @@
 import {
     buildMailOptionsForNotaEjercicio,
     buildMailOptionsForNotaExamen,
-    sendMail,
 } from '../app/mail';
+import { sendMail } from '../app/mail/mailer';
 import { assert, createTestSuite } from './utils';
 
 const [test, xtest] = createTestSuite('Mails');

@@ -2,6 +2,7 @@ export type Options = {
     subject: string;
     text: string;
     html: string;
+    replyTo?: string;
 };
 
 export type ContextNotaEjercicio = {
@@ -22,3 +23,9 @@ export type ContextNotaExamen = {
     puntos_extras: string;
     nota_final: string;
 };
+
+type Mail<Context> = { to: string; context: Context };
+
+export type MailNotaEjercicio = Mail<ContextNotaEjercicio>;
+
+export type MailNotaExamen = Mail<ContextNotaExamen>;
