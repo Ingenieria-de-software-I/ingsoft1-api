@@ -3,7 +3,7 @@ import type { VercelApiHandler } from '@vercel/node';
 import { buildMailOptionsForNotaExamen, sendMail } from '../app/mail';
 import { ContextNotaExamen } from '../app/types';
 
-export const handler: VercelApiHandler = async function (req, res) {
+const handler: VercelApiHandler = async function (req, res) {
     try {
         const to = '';
         const context: ContextNotaExamen = {
@@ -24,3 +24,5 @@ export const handler: VercelApiHandler = async function (req, res) {
     }
     res.send(':)');
 };
+
+export default handler;
