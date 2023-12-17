@@ -1,21 +1,30 @@
-import {
-    buildMailOptionsForNotaEjercicio,
-    buildMailOptionsForNotaExamen,
-} from '../app/mail';
-import { sendMail } from '../app/mail/mailer';
-import { assert, createTestSuite } from './utils';
+import { MailerApi } from '../../app/mail/MailerApi';
+import { MailerClientStub } from '../stubs';
+import { assert, createTestSuite } from '../utils';
 
-const [test, xtest] = createTestSuite('Mails');
+const [test, xtest] = createTestSuite('Mail');
 
 const email4test = process.env.USER_EMAIL!;
 
-xtest('Send a simple mail', async () => {
-    const mailInfo = await sendMail(email4test, {
-        subject: 'TEST MAIL SENDING',
-        html: '<h1>HTML</h1>',
-        text: 'Plain text',
-    });
+let mailer: MailerApi;
+let mailerClientStub: MailerClientStub;
+
+test.before(() => {
+    mailerClientStub = new MailerClientStub();
+    mailer = new MailerApi(mailerClientStub);
 });
+
+const _changeStubBehaviourToAssertContent = (
+    subject: string,
+    text: string,
+    html: string,
+) => {
+    mailerClientStub.changeBehaviour(async (to, options) => {
+        assert(options.subject.includes(subject));
+        text.split('\n').forEach((line) => assert(options.text.includes(line)));
+        html.split('\n').forEach((line) => assert(options.html.includes(line)));
+    });
+};
 
 test('Template nota_ejercicio', () => {
     const context = {
@@ -26,7 +35,6 @@ test('Template nota_ejercicio', () => {
         nota: 'NOTA',
         correcciones: 'Esta es la corrección',
     };
-    const options = buildMailOptionsForNotaEjercicio(context);
 
     const subject = `Correción de ejercicio ${context.ejercicio} - Grupo ${context.grupo}`;
     const text = `Mail para el grupo ${context.grupo}.
@@ -36,11 +44,8 @@ Hola, este mail es para darles la devolución del ejercicio ${context.ejercicio}
 <p>Corrector: ${context.corrector}.</p>
 <p>Hola, este mail es para darles la devolución del ejercicio ${context.ejercicio}, su nota es <strong>${context.nota}</strong>.</p>`;
 
-    assert(options.subject.includes(subject));
-    text.split('\n').forEach((line) => assert(options.text.includes(line)));
-    html.split('\n').forEach((line) => assert(options.html.includes(line)));
-
-    // sendMail(email4test, options);
+    _changeStubBehaviourToAssertContent(subject, text, html);
+    mailer.sendMailNotaEjercicio(context, email4test);
 });
 
 test('Template nota_examen', () => {
@@ -54,7 +59,6 @@ test('Template nota_examen', () => {
         puntos_extras: 'PUNTOS EXTRA',
         nota_final: 'NOTA FINAL',
     };
-    const options = buildMailOptionsForNotaExamen(context);
 
     const subject = `Corrección de ${context.examen} - Padrón ${context.padron}`;
     const text = `Mail para ${context.nombre}.
@@ -68,9 +72,6 @@ pero gracias a los puntos extra que te ganaste en los cuestionarios, tu nota fin
 <strong>${context.nota_final}</strong>.</p>
 ${context.correcciones}`;
 
-    assert(options.subject.includes(subject));
-    text.split('\n').forEach((line) => assert(options.text.includes(line)));
-    html.split('\n').forEach((line) => assert(options.html.includes(line)));
-
-    // sendMail(email4test, options);
+    _changeStubBehaviourToAssertContent(subject, text, html);
+    mailer.sendMailNotaExamen(context, email4test);
 });

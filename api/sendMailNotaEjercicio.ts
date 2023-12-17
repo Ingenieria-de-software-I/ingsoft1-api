@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-import { sendMailNotaEjercicioHandler } from '../app/http';
+import { api } from '../app/api';
 
 export default async function (req: VercelRequest, res: VercelResponse) {
-    const response = await sendMailNotaEjercicioHandler({ ...req.body });
+    const response = await api.sendMailNotaEjercicioHandler({ ...req.body });
     res.status(response.code).send(response.message);
 }

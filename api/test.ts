@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-import { testHandler } from '../app/http';
+import { api } from '../app/api';
 
 export default async function (req: VercelRequest, res: VercelResponse) {
-    const response = await testHandler({});
+    const response = await api.testHandler({});
     res.status(response.code).send(response.message);
 }

@@ -1,28 +1,28 @@
-export class HttpRequest<T> {
-    private partial: string;
-    private json: string;
+export class HttpRequest {
+    private _partial: string;
+    private _json: string;
 
-    constructor(partial: T) {
-        this.json = JSON.stringify(partial);
-        this.partial = `JSON.parse(\`${this.json}\`)`;
+    constructor(partial: unknown) {
+        this._json = JSON.stringify(partial);
+        this._partial = `JSON.parse(\`${this._json}\`)`;
     }
 
-    private getValue(property: string): unknown {
+    private _getValue(property: string): unknown {
         try {
-            const value = eval(`${this.partial}.${property}`);
+            const value = eval(`${this._partial}.${property}`);
             if (value === undefined) {
                 throw new Error(`Value: ${value}`);
             }
             return value;
         } catch (error) {
             throw new Error(
-                HttpRequest.missingPropertyErrorMessage(property, this.json),
+                HttpRequest.missingPropertyErrorMessage(property, this._json),
             );
         }
     }
 
     parseString(property: string): string {
-        return String(this.getValue(property));
+        return String(this._getValue(property));
     }
 
     static missingPropertyErrorMessage(property: string, json: string) {
