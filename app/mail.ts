@@ -1,8 +1,23 @@
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
+import { marked } from 'marked';
 import nodemailer from 'nodemailer';
+import nunjucks from 'nunjucks';
+
+import { ContextNotaEjercicio, ContextNotaExamen, Options } from './types';
 
 dotenv.config();
+
+const env = nunjucks
+    .configure('templates')
+    .addFilter('md', marked.parse)
+    .addFilter('as_grade_str', (grade) => {
+        const grade_as_number = Number(grade);
+        if (Number.isNaN(grade_as_number)) {
+            return grade;
+        }
+        return grade_as_number.toFixed(2);
+    });
 
 const OAuth2 = google.auth.OAuth2;
 
@@ -42,12 +57,25 @@ async function createTransporter() {
     });
 }
 
-export async function sendMail(from: string, to: string) {
+export async function sendMail(to: string, options: Options) {
     const transporter = await createTransporter();
-    return await transporter.sendMail({
-        from,
-        to,
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!',
-    });
+    return await transporter.sendMail({ to, ...options });
+}
+
+export function buildMailOptionsForNotaEjercicio(
+    context: ContextNotaEjercicio,
+): Options {
+    const subject = `Correción de ejercicio ${context.ejercicio} - Grupo ${context.grupo}`;
+    const text = env.render(`emails/notas_ejercicio_plain.html`, context);
+    const html = env.render(`emails/notas_ejercicio.html`, context);
+    return { subject, text, html };
+}
+
+export function buildMailOptionsForNotaExamen(
+    context: ContextNotaExamen,
+): Options {
+    const subject = `Corrección de ${context.examen} - Padrón ${context.padron}`;
+    const text = env.render(`emails/notas_examen_plain.html`, context);
+    const html = env.render(`emails/notas_examen.html`, context);
+    return { subject, text, html };
 }
