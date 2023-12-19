@@ -45,7 +45,7 @@ Hola, este mail es para darles la devolución del ejercicio ${context.ejercicio}
 <p>Hola, este mail es para darles la devolución del ejercicio ${context.ejercicio}, su nota es <strong>${context.nota}</strong>.</p>`;
 
     _changeStubBehaviourToAssertContent(subject, text, html);
-    mailer.sendMailNotaEjercicio(context, email4test);
+    mailer.sendMailExerciseFeedback(context, email4test);
 });
 
 test('Template nota_examen', () => {
@@ -73,5 +73,5 @@ pero gracias a los puntos extra que te ganaste en los cuestionarios, tu nota fin
 ${context.correcciones}`;
 
     _changeStubBehaviourToAssertContent(subject, text, html);
-    mailer.sendMailNotaExamen(context, email4test);
+    mailer.sendMailExamFeedback(context, email4test);
 });

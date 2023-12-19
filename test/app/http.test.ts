@@ -53,8 +53,8 @@ test('Parse request', () => {
     });
 });
 
-test('Send mail nota ejercicio', async () => {
-    const badResponse = await api.sendMailNotaEjercicioHandler({});
+test('Send mail exercise feedback', async () => {
+    const badResponse = await api.sendMailExerciseFeedbackHandler({});
     _assertBadResponse(badResponse);
 
     const params = {
@@ -68,16 +68,18 @@ test('Send mail nota ejercicio', async () => {
         },
     };
 
-    const errorResponse = await api.sendMailNotaEjercicioHandler({ ...params });
+    const errorResponse = await api.sendMailExerciseFeedbackHandler({
+        ...params,
+    });
     _assertErrorResponse(errorResponse);
 
     mailerClientStub.changeBehaviour(async () => {});
-    const okResponse = await api.sendMailNotaEjercicioHandler({ ...params });
+    const okResponse = await api.sendMailExerciseFeedbackHandler({ ...params });
     _assertOkResponse(okResponse);
 });
 
-test('Send mail nota examen', async () => {
-    const badResponse = await api.sendMailNotaExamenHandler({});
+test('Send mail exam feedback', async () => {
+    const badResponse = await api.sendMailExamFeedbackHandler({});
     _assertBadResponse(badResponse);
 
     const params = {
@@ -94,10 +96,71 @@ test('Send mail nota examen', async () => {
         },
     };
 
-    const errorResponse = await api.sendMailNotaExamenHandler({ ...params });
+    const errorResponse = await api.sendMailExamFeedbackHandler({ ...params });
     _assertErrorResponse(errorResponse);
 
     mailerClientStub.changeBehaviour(async () => {});
-    const okResponse = await api.sendMailNotaExamenHandler({ ...params });
+    const okResponse = await api.sendMailExamFeedbackHandler({ ...params });
     _assertOkResponse(okResponse);
+});
+
+test("Get teachers' emails", async () => {
+    const okResponse = await api.getTeachersEmailsHandler({});
+    _assertOkResponse(okResponse);
+});
+
+test('Assign exercise', async () => {
+    const badResponse = await api.assignExerciseHandler({});
+    _assertBadResponse(badResponse);
+
+    const config = {
+        notion: {
+            token: 'notion.token',
+            db_devolucion: 'notion.db_devolucion',
+            db_docente: 'notion.db_docente',
+            db_ejercicio: 'notion.db_ejercicio',
+        },
+    };
+    const asignaciones = [
+        {
+            docentes: ['docente 1', 'docente 2'],
+            ejercicio: 'ejercicio 1',
+            nombre: 'grupo 1',
+        },
+    ];
+    const params = { config, asignaciones };
+
+    const errorResponse = await api.assignExerciseHandler({ ...params });
+    _assertErrorResponse(errorResponse);
+
+    const okResponse = await api.assignExerciseHandler({ ...params });
+    // _assertOkResponse(okResponse);
+});
+
+test('Assign exam', async () => {
+    const badResponse = await api.assignExamHandler({});
+    _assertBadResponse(badResponse);
+
+    const config = {
+        notion: {
+            token: 'notion.token',
+            db_devolucion: 'notion.db_devolucion',
+            db_docente: 'notion.db_docente',
+            db_ejercicio: 'notion.db_ejercicio',
+        },
+    };
+    const asignaciones = [
+        {
+            docentes: ['docente 1', 'docente 2'],
+            ejercicio: 'examen 1',
+            nombre: 'grupo 1',
+        },
+    ];
+    const params = { config, asignaciones };
+
+    const errorResponse = await api.assignExerciseHandler({ ...params });
+    _assertErrorResponse(errorResponse);
+
+    const okResponse = await api.assignExerciseHandler({ ...params });
+    // _assertOkResponse(okResponse);
 });

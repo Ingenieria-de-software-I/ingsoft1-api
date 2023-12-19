@@ -5,7 +5,7 @@ export type Options = {
     replyTo?: string;
 };
 
-export type ContextNotaEjercicio = {
+export type ContextExerciseFeedback = {
     ejercicio: string;
     grupo: string;
     corrector: string;
@@ -13,7 +13,7 @@ export type ContextNotaEjercicio = {
     correcciones: string;
 };
 
-export type ContextNotaExamen = {
+export type ContextExamFeedback = {
     examen: string;
     nombre: string;
     padron: string;
@@ -26,6 +26,6 @@ export type ContextNotaExamen = {
 
 type Mail<Context> = { to: string; context: Context };
 
-export type MailNotaEjercicio = Mail<ContextNotaEjercicio>;
+export type MailExerciseFeedback = Mail<ContextExerciseFeedback>;
 
-export type MailNotaExamen = Mail<ContextNotaExamen>;
+export type MailExamFeedback = Mail<ContextExamFeedback>;

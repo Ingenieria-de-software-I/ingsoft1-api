@@ -25,6 +25,11 @@ export class HttpRequest {
         return String(this._getValue(property));
     }
 
+    map<T>(property: string, cb: (req: HttpRequest) => T): Array<T> {
+        const arr = this._getValue(property) as Array<unknown>;
+        return arr.map((val) => cb(new HttpRequest(val)));
+    }
+
     static missingPropertyErrorMessage(property: string, json: string) {
         return `${property} missing in ${json}`;
     }

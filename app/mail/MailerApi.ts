@@ -1,7 +1,11 @@
 import { marked } from 'marked';
 import { default as nunjucks } from 'nunjucks';
 
-import { ContextNotaEjercicio, ContextNotaExamen, Options } from '../types';
+import {
+    ContextExamFeedback,
+    ContextExerciseFeedback,
+    Options,
+} from '../types';
 import { MailerClient } from './types';
 
 const env = nunjucks
@@ -29,8 +33,8 @@ export class MailerApi {
         return env.render(name, context);
     }
 
-    private _buildMailOptionsForNotaEjercicio(
-        context: ContextNotaEjercicio,
+    private _buildMailOptionsForExerciseFeedback(
+        context: ContextExerciseFeedback,
     ): Options {
         const subject = `Correción de ejercicio ${context.ejercicio} - Grupo ${context.grupo}`;
         const text = this._render(`emails/notas_ejercicio_plain.html`, context);
@@ -39,13 +43,16 @@ export class MailerApi {
         return { subject, text, html, replyTo };
     }
 
-    async sendMailNotaEjercicio(context: ContextNotaEjercicio, to: string) {
-        const options = this._buildMailOptionsForNotaEjercicio(context);
+    async sendMailExerciseFeedback(
+        context: ContextExerciseFeedback,
+        to: string,
+    ) {
+        const options = this._buildMailOptionsForExerciseFeedback(context);
         await this._sendMail(to, options);
     }
 
-    private _buildMailOptionsForNotaExamen(
-        context: ContextNotaExamen,
+    private _buildMailOptionsForExamFeedback(
+        context: ContextExamFeedback,
     ): Options {
         const subject = `Corrección de ${context.examen} - Padrón ${context.padron}`;
         const text = this._render(`emails/notas_examen_plain.html`, context);
@@ -54,8 +61,8 @@ export class MailerApi {
         return { subject, text, html, replyTo };
     }
 
-    async sendMailNotaExamen(context: ContextNotaExamen, to: string) {
-        const options = this._buildMailOptionsForNotaExamen(context);
+    async sendMailExamFeedback(context: ContextExamFeedback, to: string) {
+        const options = this._buildMailOptionsForExamFeedback(context);
         await this._sendMail(to, options);
     }
 }
