@@ -1,22 +1,24 @@
 import type {
-    PageObjectResponse,
     QueryDatabaseParameters,
+    RichTextItemResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 
-import { PageProperty } from './properties/Property';
+export type Identificable<T> = { id: string } & T;
 
-export type Id = string;
-
-export type Identificable<T> = { id: Id } & T;
-
-export type SearchParams<T> = {
+export type SearchParameters<T> = {
     [k in keyof T]?: Array<T[k]>;
 };
 
-export type Page = PageObjectResponse;
-
 export type Filter = QueryDatabaseParameters['filter'];
 
-export type Properties = {
-    [name: string]: PageProperty;
+type RecursivePartial<T> = {
+    [K in keyof T]?: T[K] extends Array<infer I>
+        ? Array<RecursivePartial<I>>
+        : RecursivePartial<T[K]>;
 };
+
+export type PageProperty = RecursivePartial<{
+    title: Array<RichTextItemResponse>;
+    rich_text: Array<RichTextItemResponse>;
+    relation: Array<Identificable<void>>;
+}>;

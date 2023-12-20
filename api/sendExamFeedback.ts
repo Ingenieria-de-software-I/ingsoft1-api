@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-import { api } from '../app/api';
+import { api } from '../app/production/api';
 
 export default async function (req: VercelRequest, res: VercelResponse) {
-    const response = await api.sendMailExamFeedbackHandler({ ...req.body });
+    const response = await api.sendExamFeedbackHandler({ ...req.body });
     res.status(response.code).send(response.message);
 }

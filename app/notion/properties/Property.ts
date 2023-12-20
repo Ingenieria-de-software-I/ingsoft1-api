@@ -1,18 +1,4 @@
-import { RichTextItemResponse } from '@notionhq/client/build/src/api-endpoints';
-
-import { Filter, Identificable } from '../types';
-
-type RecursivePartial<T> = {
-    [K in keyof T]?: T[K] extends Array<infer I>
-        ? Array<RecursivePartial<I>>
-        : RecursivePartial<T[K]>;
-};
-
-export type PageProperty = RecursivePartial<{
-    title: Array<RichTextItemResponse>;
-    rich_text: Array<RichTextItemResponse>;
-    relation: Array<Identificable<void>>;
-}>;
+import { Filter, PageProperty } from '../types';
 
 export abstract class Property<TValue> {
     constructor(public name: string) {}

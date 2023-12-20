@@ -1,5 +1,5 @@
-import { Filter } from '../types';
-import { PageProperty, Property } from './Property';
+import { Filter, PageProperty } from '../types';
+import { Property } from './Property';
 
 export class RichTextProperty extends Property<string> {
     protected _filter(value: string): Filter {

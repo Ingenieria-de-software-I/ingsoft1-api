@@ -1,13 +1,18 @@
 import { Client } from '@notionhq/client';
-import { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
+import {
+    PageObjectResponse,
+    QueryDatabaseParameters,
+} from '@notionhq/client/build/src/api-endpoints';
 
 import { Schema } from './Schema';
-import { Identificable, Page, SearchParams } from './types';
+import { Identificable, SearchParameters } from './types';
+
+type Page = PageObjectResponse;
 
 export class Database<T> {
     constructor(
         private _client: Client,
-        private _database_id: string,
+        private _databaseId: string,
         private _schema: Schema<T>,
     ) {}
 
@@ -15,16 +20,16 @@ export class Database<T> {
         return pages.map((page) => this._schema.mapPage(page));
     }
 
-    async query(attributes: SearchParams<T>): Promise<Array<Identificable<T>>> {
+    async query(params: SearchParameters<T>): Promise<Array<Identificable<T>>> {
         const queryParameters: QueryDatabaseParameters = {
-            database_id: this._database_id,
+            database_id: this._databaseId,
             filter_properties: this._schema.getFilterProperties(),
         };
 
-        const filter = this._schema.getFilters(attributes);
+        const filters = this._schema.buildFilterFrom(params);
 
-        if (filter) {
-            queryParameters['filter'] = filter;
+        if (filters) {
+            queryParameters['filter'] = filters;
         }
 
         const response = await this._client.databases.query(queryParameters);
@@ -39,8 +44,8 @@ export class Database<T> {
         const pages = await Promise.all(
             models.map(async (model) => {
                 const response = await this._client.pages.create({
-                    parent: { database_id: this._database_id },
-                    properties: this._schema.getProperties(
+                    parent: { database_id: this._databaseId },
+                    properties: this._schema.getPropertiesFrom(
                         model,
                     ) as Page['properties'],
                 });
@@ -56,7 +61,7 @@ export class Database<T> {
             models.map(async (model) => {
                 const response = await this._client.pages.update({
                     page_id: model.id,
-                    properties: this._schema.getProperties(
+                    properties: this._schema.getPropertiesFrom(
                         model,
                     ) as Page['properties'],
                 });
@@ -67,13 +72,18 @@ export class Database<T> {
         return this._mapPages(pages);
     }
 
-    async delete(models: Identificable<T>[]): Promise<Array<{ id: string }>> {
-        const pages = await Promise.all(
-            models.map((model) => {
-                return this._client.blocks.delete({ block_id: model.id });
+    async delete(
+        models: Identificable<T>[],
+    ): Promise<Array<Identificable<{}>>> {
+        const blocks = await Promise.all(
+            models.map(async (model) => {
+                const response = this._client.blocks.delete({
+                    block_id: model.id,
+                });
+                return response;
             }),
         );
 
-        return pages.map(({ id }) => ({ id }));
+        return blocks.map((block) => ({ id: block.id }));
     }
 }

@@ -1,12 +1,8 @@
 import { marked } from 'marked';
 import { default as nunjucks } from 'nunjucks';
 
-import {
-    ContextExamFeedback,
-    ContextExerciseFeedback,
-    Options,
-} from '../types';
 import { MailerClient } from './types';
+import { ContextExamFeedback, ContextExerciseFeedback, Options } from './types';
 
 const env = nunjucks
     .configure('templates')
@@ -19,7 +15,7 @@ const env = nunjucks
         return grade_as_number.toFixed(2);
     });
 
-export class MailerApi {
+export class Mailer {
     constructor(
         private _mailerClient: MailerClient,
         private _replyTo?: string,
@@ -43,10 +39,7 @@ export class MailerApi {
         return { subject, text, html, replyTo };
     }
 
-    async sendMailExerciseFeedback(
-        context: ContextExerciseFeedback,
-        to: string,
-    ) {
+    async sendExerciseFeedback(context: ContextExerciseFeedback, to: string) {
         const options = this._buildMailOptionsForExerciseFeedback(context);
         await this._sendMail(to, options);
     }
@@ -61,7 +54,7 @@ export class MailerApi {
         return { subject, text, html, replyTo };
     }
 
-    async sendMailExamFeedback(context: ContextExamFeedback, to: string) {
+    async sendExamFeedback(context: ContextExamFeedback, to: string) {
         const options = this._buildMailOptionsForExamFeedback(context);
         await this._sendMail(to, options);
     }

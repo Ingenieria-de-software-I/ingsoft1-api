@@ -1,7 +1,11 @@
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
 import { Property } from './properties/Property';
-import { Filter, Identificable, Properties, SearchParams } from './types';
+import { Filter, Identificable, PageProperty, SearchParameters } from './types';
+
+type Properties = {
+    [name: string]: PageProperty;
+};
 
 type SchemaProperties<T> = {
     [key in keyof T]: Property<T[key]>;
@@ -10,12 +14,12 @@ type SchemaProperties<T> = {
 export class Schema<T> {
     constructor(public properties: SchemaProperties<T>) {}
 
-    getFilters(attributes: SearchParams<T>): Filter | null {
+    buildFilterFrom(params: SearchParameters<T>): Filter | null {
         const filters: Filter[] = [];
 
-        for (const attribute in attributes) {
-            const property = this.properties[attribute];
-            const values = attributes[attribute];
+        for (const name in params) {
+            const property = this.properties[name];
+            const values = params[name];
             if (!property || !values) continue;
             const filter = property.filter(values);
             if (!filter) continue;
@@ -31,7 +35,7 @@ export class Schema<T> {
         return Object.keys(this.properties);
     }
 
-    getProperties(model: Partial<T>): Properties {
+    getPropertiesFrom(model: Partial<T>): Properties {
         const properties: Properties = {};
 
         for (const propertyName in model) {
