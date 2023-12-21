@@ -78,10 +78,10 @@ class RealAssignerRepository implements AssignerRepository {
     }
 
     getFeedbacksFrom(
-        exercises: Exercise[],
+        exercises: Identificable<Exercise>[],
     ): Promise<Identificable<Feedback>[]> {
         return this._databases.feedbacks.query({
-            id_ejercicio: exercises.map((exercise) => exercise.nombre),
+            id_ejercicio: exercises.map((exercise) => exercise.id),
         });
     }
 

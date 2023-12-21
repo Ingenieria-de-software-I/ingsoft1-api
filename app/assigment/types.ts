@@ -37,7 +37,7 @@ export interface AssignerRepository {
         assignments: Array<Assignment>,
     ): Promise<Array<Identificable<Teacher>>>;
     getFeedbacksFrom(
-        exercises: Array<Exercise>,
+        exercises: Array<Identificable<Exercise>>,
     ): Promise<Array<Identificable<Feedback>>>;
     createFeedbacks(
         feedbacks: Array<Feedback>,

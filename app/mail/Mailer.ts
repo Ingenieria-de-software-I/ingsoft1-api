@@ -1,8 +1,12 @@
 import { marked } from 'marked';
 import { default as nunjucks } from 'nunjucks';
 
-import { MailerClient } from './types';
-import { ContextExamFeedback, ContextExerciseFeedback, Options } from './types';
+import {
+    ContextExamFeedback,
+    ContextExerciseFeedback,
+    MailerClient,
+    Options,
+} from './types';
 
 const env = nunjucks
     .configure('templates')
