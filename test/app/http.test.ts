@@ -3,6 +3,7 @@ import { HttpApi } from '../../app/http/HttpApi';
 import { HttpRequest } from '../../app/http/HttpRequest';
 import { HttpResponse } from '../../app/http/HttpResponse';
 import { Mailer } from '../../app/mail/Mailer';
+import * as constants from '../constants';
 import { AssignerRepositoryFactoryStub } from '../stubs/AssignerRepositoryFactoryStub';
 import { MailerClientStub } from '../stubs/MailerClientStub';
 import { assert, createTestSuite } from '../utils';
@@ -22,14 +23,14 @@ test.before(() => {
     });
 });
 
-const _assertCode = (res: HttpResponse, c: number) => assert.equal(res.code, c);
-const _assertBadResponse = (res: HttpResponse) => _assertCode(res, 400);
-const _assertErrorResponse = (res: HttpResponse) => _assertCode(res, 500);
-const _assertOkResponse = (res: HttpResponse) => _assertCode(res, 200);
+const assertCode = (res: HttpResponse, c: number) => assert.equal(res.code, c);
+const assertBadResponse = (res: HttpResponse) => assertCode(res, 400);
+const assertErrorResponse = (res: HttpResponse) => assertCode(res, 500);
+const assertOkResponse = (res: HttpResponse) => assertCode(res, 200);
 
 test("Get teachers' emails", async () => {
     const okResponse = await api.getTeachersEmailsHandler({});
-    _assertOkResponse(okResponse);
+    assertOkResponse(okResponse);
 });
 
 test('Parse request', () => {
@@ -67,7 +68,7 @@ test('Parse request', () => {
 
 test('Send mail exercise feedback', async () => {
     const badResponse = await api.sendExerciseFeedbackHandler({});
-    _assertBadResponse(badResponse);
+    assertBadResponse(badResponse);
 
     const params = {
         to: 'to',
@@ -83,16 +84,16 @@ test('Send mail exercise feedback', async () => {
     const errorResponse = await api.sendExerciseFeedbackHandler({
         ...params,
     });
-    _assertErrorResponse(errorResponse);
+    assertErrorResponse(errorResponse);
 
     mailerClientStub.changeBehaviour(async () => {});
     const okResponse = await api.sendExerciseFeedbackHandler({ ...params });
-    _assertOkResponse(okResponse);
+    assertOkResponse(okResponse);
 });
 
 test('Send mail exam feedback', async () => {
     const badResponse = await api.sendExamFeedbackHandler({});
-    _assertBadResponse(badResponse);
+    assertBadResponse(badResponse);
 
     const params = {
         to: 'to',
@@ -109,16 +110,16 @@ test('Send mail exam feedback', async () => {
     };
 
     const errorResponse = await api.sendExamFeedbackHandler({ ...params });
-    _assertErrorResponse(errorResponse);
+    assertErrorResponse(errorResponse);
 
     mailerClientStub.changeBehaviour(async () => {});
     const okResponse = await api.sendExamFeedbackHandler({ ...params });
-    _assertOkResponse(okResponse);
+    assertOkResponse(okResponse);
 });
 
 test('Assign exercise', async () => {
     const badResponse = await api.assignExerciseHandler({});
-    _assertBadResponse(badResponse);
+    assertBadResponse(badResponse);
 
     const config = {
         notion: {
@@ -138,7 +139,7 @@ test('Assign exercise', async () => {
     const params = { config, asignaciones };
 
     const errorResponse = await api.assignExerciseHandler({ ...params });
-    _assertErrorResponse(errorResponse);
+    assertErrorResponse(errorResponse);
 
     assignerRepositoryFactory.changeBehaviour({
         getExercisesFrom(assigments) {
@@ -158,12 +159,12 @@ test('Assign exercise', async () => {
         },
     });
     const okResponse = await api.assignExerciseHandler({ ...params });
-    _assertOkResponse(okResponse);
+    assertOkResponse(okResponse);
 });
 
 test('Assign exam', async () => {
     const badResponse = await api.assignExamHandler({});
-    _assertBadResponse(badResponse);
+    assertBadResponse(badResponse);
 
     const config = {
         notion: {
@@ -183,7 +184,7 @@ test('Assign exam', async () => {
     const params = { config, asignaciones };
 
     const errorResponse = await api.assignExamHandler({ ...params });
-    _assertErrorResponse(errorResponse);
+    assertErrorResponse(errorResponse);
 
     assignerRepositoryFactory.changeBehaviour({
         getExercisesFrom(assigments) {
@@ -203,5 +204,24 @@ test('Assign exam', async () => {
         },
     });
     const okResponse = await api.assignExamHandler({ ...params });
-    _assertOkResponse(okResponse);
+    assertOkResponse(okResponse);
+});
+
+test("Get teachers' emails", async () => {
+    const response = await api.getTeachersEmailsHandler({});
+    assertOkResponse(response);
+
+    assert(response.message.length > 0);
+});
+
+test('Get content from page', async () => {
+    const response = await api.getContentFromPageHandler({
+        notion: {
+            token: constants.TEST_NOTION_TOKEN,
+        },
+        page_id: constants.TEST_NOTION_BLOCK_ID,
+    });
+    assertOkResponse(response);
+
+    assert(response.message.length > 0);
 });

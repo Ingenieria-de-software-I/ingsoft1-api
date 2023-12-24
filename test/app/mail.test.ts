@@ -1,10 +1,9 @@
 import { Mailer } from '../../app/mail/Mailer';
+import { TEST_USER_EMAIL } from '../constants';
 import { MailerClientStub } from '../stubs/MailerClientStub';
 import { assert, createTestSuite } from '../utils';
 
 const [test, xtest] = createTestSuite('Mail');
-
-const email4test = process.env.USER_EMAIL!;
 
 let mailer: Mailer;
 let mailerClientStub: MailerClientStub;
@@ -14,7 +13,7 @@ test.before(() => {
     mailer = new Mailer(mailerClientStub);
 });
 
-const _changeStubBehaviourToAssertContent = (
+const changeStubBehaviourToAssertContent = (
     subject: string,
     text: string,
     html: string,
@@ -30,7 +29,7 @@ test('Template nota_ejercicio', () => {
     const context = {
         ejercicio: 'Ejecicio',
         grupo: 'Grupo',
-        email: email4test,
+        email: TEST_USER_EMAIL,
         corrector: 'Corrector',
         nota: 'NOTA',
         correcciones: 'Esta es la corrección',
@@ -44,8 +43,8 @@ Hola, este mail es para darles la devolución del ejercicio ${context.ejercicio}
 <p>Corrector: ${context.corrector}.</p>
 <p>Hola, este mail es para darles la devolución del ejercicio ${context.ejercicio}, su nota es <strong>${context.nota}</strong>.</p>`;
 
-    _changeStubBehaviourToAssertContent(subject, text, html);
-    mailer.sendExerciseFeedback(context, email4test);
+    changeStubBehaviourToAssertContent(subject, text, html);
+    mailer.sendExerciseFeedback(context, TEST_USER_EMAIL);
 });
 
 test('Template nota_examen', () => {
@@ -72,6 +71,6 @@ pero gracias a los puntos extra que te ganaste en los cuestionarios, tu nota fin
 <strong>${context.nota_final}</strong>.</p>
 ${context.correcciones}`;
 
-    _changeStubBehaviourToAssertContent(subject, text, html);
-    mailer.sendExamFeedback(context, email4test);
+    changeStubBehaviourToAssertContent(subject, text, html);
+    mailer.sendExamFeedback(context, TEST_USER_EMAIL);
 });

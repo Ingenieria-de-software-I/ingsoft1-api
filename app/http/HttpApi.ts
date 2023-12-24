@@ -1,9 +1,11 @@
+import { Client } from '@notionhq/client';
 import axios from 'axios';
 
 import { Assigner } from '../assigment/Assigner';
 import { Assignment, Config } from '../assigment/types';
 import { Mailer } from '../mail/Mailer';
 import { MailExamFeedback, MailExerciseFeedback } from '../mail/types';
+import { getContentFromBlock } from '../notion/blocks';
 import { HttpRequest } from './HttpRequest';
 import { HttpResponse } from './HttpResponse';
 
@@ -116,6 +118,25 @@ export class HttpApi {
             .filter(Boolean)
             .join(', ');
         return HttpResponse.ok(emails);
+    };
+
+    getContentFromPageHandler: Handler = async (params) => {
+        try {
+            const request = new HttpRequest(params);
+            var token = request.parseString('notion.token');
+            var blockId = request.parseString('page_id');
+        } catch (error) {
+            return HttpResponse.badRequest(String(error));
+        }
+        try {
+            var content = await getContentFromBlock(
+                new Client({ auth: token }),
+                blockId,
+            );
+        } catch (error) {
+            return HttpResponse.error(String(error));
+        }
+        return HttpResponse.ok(content);
     };
 
     testHandler: Handler = async () => {

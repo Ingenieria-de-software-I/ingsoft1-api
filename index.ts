@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 
 import './test';
-
-dotenv.config();
