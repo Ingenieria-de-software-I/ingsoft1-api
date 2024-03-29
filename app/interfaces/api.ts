@@ -1,17 +1,16 @@
 import { Client } from '@notionhq/client';
 import axios from 'axios';
 
-import { Assigner } from '../assigment/Assigner';
-import { Assignment, Config } from '../assigment/types';
-import { Mailer } from '../mail/Mailer';
-import { MailExamFeedback, MailExerciseFeedback } from '../mail/types';
-import { getContentFromBlock } from '../notion/blocks';
-import { HttpRequest } from './HttpRequest';
-import { HttpResponse } from './HttpResponse';
+import { Assigner, Assignment, Config } from '../feedbacks/assigner';
+import { Mailer } from '../feedbacks/mailer';
+import { MailExamFeedback, MailExerciseFeedback } from '../feedbacks/mailer';
+import { getContentFromBlock } from '../persistance/notion/blocks';
+import { Request } from './request';
+import { Response } from './response';
 
-type Handler = (params: unknown) => Promise<HttpResponse>;
+type Handler = (params: unknown) => Promise<Response>;
 
-export class HttpApi {
+export class Api {
     constructor(
         private _services: {
             mailer: Mailer;
@@ -21,7 +20,7 @@ export class HttpApi {
 
     sendExerciseFeedbackHandler: Handler = async (params) => {
         try {
-            const request = new HttpRequest(params);
+            const request = new Request(params);
             var { to, context }: MailExerciseFeedback = {
                 to: request.parseString('to'),
                 context: {
@@ -33,21 +32,21 @@ export class HttpApi {
                 },
             };
         } catch (error) {
-            return HttpResponse.badRequest(String(error));
+            return Response.badRequest(String(error));
         }
 
         try {
             await this._services.mailer.sendExerciseFeedback(context, to);
         } catch (error) {
-            return HttpResponse.error(String(error));
+            return Response.error(String(error));
         }
 
-        return HttpResponse.ok(`Correo enviado a ${to}`);
+        return Response.ok(`Correo enviado a ${to}`);
     };
 
     sendExamFeedbackHandler: Handler = async (params) => {
         try {
-            const request = new HttpRequest(params);
+            const request = new Request(params);
             var { to, context }: MailExamFeedback = {
                 to: request.parseString('to'),
                 context: {
@@ -62,48 +61,48 @@ export class HttpApi {
                 },
             };
         } catch (error) {
-            return HttpResponse.badRequest(String(error));
+            return Response.badRequest(String(error));
         }
 
         try {
             await this._services.mailer.sendExamFeedback(context, to);
         } catch (error) {
-            return HttpResponse.error(String(error));
+            return Response.error(String(error));
         }
 
-        return HttpResponse.ok(`Correo enviado a ${to}`);
+        return Response.ok(`Correo enviado a ${to}`);
     };
 
     assignExerciseHandler: Handler = async (params) => {
         try {
             var { config, asignaciones } = this._parseAssignRequest(params);
         } catch (error) {
-            return HttpResponse.badRequest(String(error));
+            return Response.badRequest(String(error));
         }
 
         try {
             await this._services.assigner.assignExercise(config, asignaciones);
         } catch (error) {
-            return HttpResponse.error(String(error));
+            return Response.error(String(error));
         }
 
-        return HttpResponse.ok(`Fin asignación de ejercicio`);
+        return Response.ok(`Fin asignación de ejercicio`);
     };
 
     assignExamHandler: Handler = async (params) => {
         try {
             var { config, asignaciones } = this._parseAssignRequest(params);
         } catch (error) {
-            return HttpResponse.badRequest(String(error));
+            return Response.badRequest(String(error));
         }
 
         try {
             await this._services.assigner.assignExercise(config, asignaciones);
         } catch (error) {
-            return HttpResponse.error(String(error));
+            return Response.error(String(error));
         }
 
-        return HttpResponse.ok(`Fin asignación de examen`);
+        return Response.ok(`Fin asignación de examen`);
     };
 
     getTeachersEmailsHandler: Handler = async () => {
@@ -117,16 +116,16 @@ export class HttpApi {
             .map((d) => d.email)
             .filter(Boolean)
             .join(', ');
-        return HttpResponse.ok(emails);
+        return Response.ok(emails);
     };
 
     getContentFromPageHandler: Handler = async (params) => {
         try {
-            const request = new HttpRequest(params);
+            const request = new Request(params);
             var token = request.parseString('notion.token');
             var blockId = request.parseString('page_id');
         } catch (error) {
-            return HttpResponse.badRequest(String(error));
+            return Response.badRequest(String(error));
         }
         try {
             var content = await getContentFromBlock(
@@ -134,17 +133,17 @@ export class HttpApi {
                 blockId,
             );
         } catch (error) {
-            return HttpResponse.error(String(error));
+            return Response.error(String(error));
         }
-        return HttpResponse.ok(content);
+        return Response.ok(content);
     };
 
     testHandler: Handler = async () => {
-        return HttpResponse.ok('OK');
+        return Response.ok('OK');
     };
 
     private _parseAssignRequest(params: unknown) {
-        const request = new HttpRequest(params);
+        const request = new Request(params);
         var config: Config = {
             notion: {
                 token: request.parseString('config.notion.token'),

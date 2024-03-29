@@ -1,6 +1,6 @@
 import { Filter, PageProperty } from '../types';
 
-export abstract class Property<TValue> {
+export default abstract class Property<TValue> {
     constructor(public name: string) {}
 
     filter(values: TValue[]): Filter {

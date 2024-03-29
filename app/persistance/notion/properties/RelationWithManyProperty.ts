@@ -1,7 +1,7 @@
 import { Filter, PageProperty } from '../types';
-import { Property } from './Property';
+import Property from './Property';
 
-export class RelationWithManyProperty extends Property<Array<string>> {
+export default class RelationWithManyProperty extends Property<Array<string>> {
     protected _filter(values: Array<string>): Filter {
         return {
             and: values.map((value) => ({

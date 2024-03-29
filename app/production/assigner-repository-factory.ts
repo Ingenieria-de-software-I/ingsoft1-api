@@ -8,13 +8,15 @@ import {
     Exercise,
     Feedback,
     Teacher,
-} from '../assigment/types';
-import { Database } from '../notion/Database';
-import { Schema } from '../notion/Schema';
-import { RelationWithManyProperty } from '../notion/properties/RelationWithManyProperty';
-import { RelationWithOneProperty } from '../notion/properties/RelationWithOneProperty';
-import { TitleProperty } from '../notion/properties/TitleProperty';
-import { Identificable } from '../notion/types';
+} from '../feedbacks/assigner';
+import { Database } from '../persistance/notion/database';
+import {
+    RelationWithManyProperty,
+    RelationWithOneProperty,
+    TitleProperty,
+} from '../persistance/notion/properties';
+import { Schema } from '../persistance/notion/schema';
+import { Identificable } from '../persistance/notion/types';
 
 export class RealAssignerRepositoryFactory
     implements AssignerRepositoryFactory

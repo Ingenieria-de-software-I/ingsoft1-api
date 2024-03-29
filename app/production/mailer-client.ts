@@ -1,11 +1,11 @@
 import { google } from 'googleapis';
 import { default as nodemailer } from 'nodemailer';
 
-import { MailerClient, Options } from '../mail/types';
+import { MailerClient, Options } from '../feedbacks/mailer';
 
 const OAuth2 = google.auth.OAuth2;
 
-export class RealMailer implements MailerClient {
+export class RealMailerClient implements MailerClient {
     constructor(
         private _config: {
             user: string;

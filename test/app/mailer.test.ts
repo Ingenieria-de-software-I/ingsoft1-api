@@ -1,6 +1,6 @@
-import { Mailer } from '../../app/mail/Mailer';
+import { Mailer } from '../../app/feedbacks/mailer';
 import { TEST_USER_EMAIL } from '../constants';
-import { MailerClientStub } from '../stubs/MailerClientStub';
+import { MailerClientStub } from '../stubs/mailer-client-stub';
 import { assert, createTestSuite } from '../utils';
 
 const [test, xtest] = createTestSuite('Mail');

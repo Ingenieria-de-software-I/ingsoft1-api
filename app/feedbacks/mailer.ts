@@ -1,12 +1,41 @@
 import { marked } from 'marked';
 import { default as nunjucks } from 'nunjucks';
 
-import {
-    ContextExamFeedback,
-    ContextExerciseFeedback,
-    MailerClient,
-    Options,
-} from './types';
+export type Options = {
+    subject: string;
+    text: string;
+    html: string;
+    replyTo?: string;
+};
+
+export type ExerciseFeedbackContext = {
+    ejercicio: string;
+    grupo: string;
+    corrector: string;
+    nota: string;
+    correcciones: string;
+};
+
+export type ExamFeedbackContext = {
+    examen: string;
+    nombre: string;
+    padron: string;
+    corrector: string;
+    correcciones: string;
+    nota: string;
+    puntos_extras: string;
+    nota_final: string;
+};
+
+type Mail<Context> = { to: string; context: Context };
+
+export type MailExerciseFeedback = Mail<ExerciseFeedbackContext>;
+
+export type MailExamFeedback = Mail<ExamFeedbackContext>;
+
+export interface MailerClient {
+    sendMail(to: string, options: Options): Promise<void>;
+}
 
 const env = nunjucks
     .configure('templates')
@@ -34,7 +63,7 @@ export class Mailer {
     }
 
     private _buildMailOptionsForExerciseFeedback(
-        context: ContextExerciseFeedback,
+        context: ExerciseFeedbackContext,
     ): Options {
         const subject = `Correción de ejercicio ${context.ejercicio} - Grupo ${context.grupo}`;
         const text = this._render(`emails/notas_ejercicio_plain.html`, context);
@@ -43,13 +72,13 @@ export class Mailer {
         return { subject, text, html, replyTo };
     }
 
-    async sendExerciseFeedback(context: ContextExerciseFeedback, to: string) {
+    async sendExerciseFeedback(context: ExerciseFeedbackContext, to: string) {
         const options = this._buildMailOptionsForExerciseFeedback(context);
         await this._sendMail(to, options);
     }
 
     private _buildMailOptionsForExamFeedback(
-        context: ContextExamFeedback,
+        context: ExamFeedbackContext,
     ): Options {
         const subject = `Corrección de ${context.examen} - Padrón ${context.padron}`;
         const text = this._render(`emails/notas_examen_plain.html`, context);
@@ -58,7 +87,7 @@ export class Mailer {
         return { subject, text, html, replyTo };
     }
 
-    async sendExamFeedback(context: ContextExamFeedback, to: string) {
+    async sendExamFeedback(context: ExamFeedbackContext, to: string) {
         const options = this._buildMailOptionsForExamFeedback(context);
         await this._sendMail(to, options);
     }

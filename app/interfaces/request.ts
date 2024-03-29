@@ -1,4 +1,4 @@
-export class HttpRequest {
+export class Request {
     private _partial: string;
     private _json: string;
 
@@ -16,7 +16,7 @@ export class HttpRequest {
             return value;
         } catch (error) {
             throw new Error(
-                HttpRequest.missingPropertyErrorMessage(property, this._json),
+                Request.missingPropertyErrorMessage(property, this._json),
             );
         }
     }
@@ -25,9 +25,9 @@ export class HttpRequest {
         return String(this._getValue(property));
     }
 
-    map<T>(property: string, cb: (req: HttpRequest) => T): Array<T> {
+    map<T>(property: string, cb: (req: Request) => T): Array<T> {
         const arr = this._getValue(property) as Array<unknown>;
-        return arr.map((val) => cb(new HttpRequest(val)));
+        return arr.map((val) => cb(new Request(val)));
     }
 
     static missingPropertyErrorMessage(property: string, json: string) {

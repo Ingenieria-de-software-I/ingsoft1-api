@@ -4,7 +4,7 @@ import {
     QueryDatabaseParameters,
 } from '@notionhq/client/build/src/api-endpoints';
 
-import { Schema } from './Schema';
+import { Schema } from './schema';
 import { Identificable, SearchParameters } from './types';
 
 type Page = PageObjectResponse;

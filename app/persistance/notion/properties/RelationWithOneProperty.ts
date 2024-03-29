@@ -1,7 +1,7 @@
 import { Filter, PageProperty } from '../types';
-import { Property } from './Property';
+import Property from './Property';
 
-export class RelationWithOneProperty extends Property<string> {
+export default class RelationWithOneProperty extends Property<string> {
     protected _filter(value: string): Filter {
         return {
             property: this.name,

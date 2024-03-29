@@ -1,7 +1,7 @@
 import { Client } from '@notionhq/client';
 import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
-import { RichTextProperty } from './properties/RichTextProperty';
+import { RichTextProperty } from './properties';
 
 export async function getContentFromBlock(client: Client, block_id: string) {
     const blocks = await client.blocks.children

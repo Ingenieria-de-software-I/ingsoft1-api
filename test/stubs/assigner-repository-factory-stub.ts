@@ -2,7 +2,7 @@ import {
     AssignerRepository,
     AssignerRepositoryFactory,
     Config,
-} from '../../app/assigment/types';
+} from '../../app/feedbacks/assigner';
 
 export class AssignerRepositoryFactoryStub
     implements AssignerRepositoryFactory

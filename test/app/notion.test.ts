@@ -1,7 +1,7 @@
 import { Client } from '@notionhq/client';
 import { assert } from 'console';
 
-import { getContentFromBlock } from '../../app/notion/blocks';
+import { getContentFromBlock } from '../../app/persistance/notion/blocks';
 import * as constants from '../constants';
 import { createTestSuite } from '../utils';
 

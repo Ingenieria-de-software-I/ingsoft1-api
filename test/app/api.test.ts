@@ -1,32 +1,32 @@
-import { Assigner } from '../../app/assigment/Assigner';
-import { HttpApi } from '../../app/http/HttpApi';
-import { HttpRequest } from '../../app/http/HttpRequest';
-import { HttpResponse } from '../../app/http/HttpResponse';
-import { Mailer } from '../../app/mail/Mailer';
+import { Assigner } from '../../app/feedbacks/assigner';
+import { Mailer } from '../../app/feedbacks/mailer';
+import { Api } from '../../app/interfaces/api';
+import { Request } from '../../app/interfaces/request';
+import { Response } from '../../app/interfaces/response';
 import * as constants from '../constants';
-import { AssignerRepositoryFactoryStub } from '../stubs/AssignerRepositoryFactoryStub';
-import { MailerClientStub } from '../stubs/MailerClientStub';
+import { AssignerRepositoryFactoryStub } from '../stubs/assigner-repository-factory-stub';
+import { MailerClientStub } from '../stubs/mailer-client-stub';
 import { assert, createTestSuite } from '../utils';
 
 const [test, xtest] = createTestSuite('HTTP');
 
-let api: HttpApi;
+let api: Api;
 let mailerClientStub: MailerClientStub;
 let assignerRepositoryFactory: AssignerRepositoryFactoryStub;
 
 test.before(() => {
     mailerClientStub = new MailerClientStub();
     assignerRepositoryFactory = new AssignerRepositoryFactoryStub();
-    api = new HttpApi({
+    api = new Api({
         mailer: new Mailer(mailerClientStub),
         assigner: new Assigner(assignerRepositoryFactory),
     });
 });
 
-const assertCode = (res: HttpResponse, c: number) => assert.equal(res.code, c);
-const assertBadResponse = (res: HttpResponse) => assertCode(res, 400);
-const assertErrorResponse = (res: HttpResponse) => assertCode(res, 500);
-const assertOkResponse = (res: HttpResponse) => assertCode(res, 200);
+const assertCode = (res: Response, c: number) => assert.equal(res.code, c);
+const assertBadResponse = (res: Response) => assertCode(res, 400);
+const assertErrorResponse = (res: Response) => assertCode(res, 500);
+const assertOkResponse = (res: Response) => assertCode(res, 200);
 
 test("Get teachers' emails", async () => {
     const okResponse = await api.getTeachersEmailsHandler({});
@@ -40,7 +40,7 @@ test('Parse request', () => {
             message: 'hi!',
         },
     };
-    const request = new HttpRequest({ ...params });
+    const request = new Request({ ...params });
 
     // Simple
     assert.equal(request.parseString('prueba'), 'exito');
@@ -51,7 +51,7 @@ test('Parse request', () => {
     // Missing
     const missingProperty = 'data.message_missing';
     assert.throws(() => request.parseString(missingProperty), {
-        message: HttpRequest.missingPropertyErrorMessage(
+        message: Request.missingPropertyErrorMessage(
             missingProperty,
             JSON.stringify(params),
         ),
@@ -59,7 +59,7 @@ test('Parse request', () => {
 
     const anotherMissingProperty = 'data_missing.message';
     assert.throws(() => request.parseString(anotherMissingProperty), {
-        message: HttpRequest.missingPropertyErrorMessage(
+        message: Request.missingPropertyErrorMessage(
             anotherMissingProperty,
             JSON.stringify(params),
         ),
