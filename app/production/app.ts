@@ -1,18 +1,19 @@
-import { Assigner } from '../feedbacks/assigner';
-import { Mailer } from '../feedbacks/mailer';
-import { Api } from '../interfaces/api';
-import { RealAssignerRepositoryFactory } from './assigner-repository-factory';
+import { Assigner } from '../system/assigner';
+import { Mailer } from '../system/mailer';
+import { Api } from '../interface/api';
+import * as constants from './constants';
 import { RealMailerClient } from './mailer-client';
+import { RealRepositoryFactory } from './repository-factory';
 
 const mailer = new Mailer(
     new RealMailerClient({
-        user: process.env.USER_EMAIL!,
-        clientId: process.env.CLIENT_ID!,
-        clientSecret: process.env.CLIENT_SECRET!,
-        refreshToken: process.env.REFRESH_TOKEN!,
+        user: constants.USER_EMAIL,
+        clientId: constants.CLIENT_ID,
+        clientSecret: constants.CLIENT_SECRET,
+        refreshToken: constants.REFRESH_TOKEN,
     }),
-    'fiuba-ingsoft1-doc@googlegroups.com',
+    constants.REPLY_TO,
 );
-const assigner = new Assigner(new RealAssignerRepositoryFactory());
+const assigner = new Assigner(new RealRepositoryFactory());
 
 export const api = new Api({ mailer, assigner });

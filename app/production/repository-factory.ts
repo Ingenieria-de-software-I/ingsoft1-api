@@ -1,14 +1,14 @@
 import { Client } from '@notionhq/client';
 
 import {
-    AssignerRepository,
-    AssignerRepositoryFactory,
     Assignment,
     Config,
     Exercise,
     Feedback,
+    Repository,
+    RepositoryFactory,
     Teacher,
-} from '../feedbacks/assigner';
+} from '../system/assigner';
 import { Database } from '../persistance/notion/database';
 import {
     RelationWithManyProperty,
@@ -18,21 +18,19 @@ import {
 import { Schema } from '../persistance/notion/schema';
 import { Identificable } from '../persistance/notion/types';
 
-export class RealAssignerRepositoryFactory
-    implements AssignerRepositoryFactory
-{
-    forExercise(config: Config): AssignerRepository {
+export class RealRepositoryFactory implements RepositoryFactory {
+    forExercise(config: Config): Repository {
         return this._repositoryForFeedbacks(config, exerciseFeedbackSchema);
     }
 
-    forExam(config: Config): AssignerRepository {
+    forExam(config: Config): Repository {
         return this._repositoryForFeedbacks(config, examFeedbackSchema);
     }
 
     private _repositoryForFeedbacks(
         config: Config,
         feedbackSchema: Schema<Feedback>,
-    ): AssignerRepository {
+    ): Repository {
         const client = new Client({ auth: config.notion.token });
         return new RealAssignerRepository({
             exercises: new Database(
@@ -54,7 +52,7 @@ export class RealAssignerRepositoryFactory
     }
 }
 
-class RealAssignerRepository implements AssignerRepository {
+class RealAssignerRepository implements Repository {
     constructor(
         private _databases: {
             exercises: Database<Exercise>;

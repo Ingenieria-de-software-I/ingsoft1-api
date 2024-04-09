@@ -1,11 +1,13 @@
 import { google } from 'googleapis';
 import { default as nodemailer } from 'nodemailer';
 
-import { MailerClient, Options } from '../feedbacks/mailer';
+import { MailerClient, Options } from '../system/mailer';
 
 const OAuth2 = google.auth.OAuth2;
 
 export class RealMailerClient implements MailerClient {
+    _transporter?: Promise<nodemailer.Transporter>;
+
     constructor(
         private _config: {
             user: string;
@@ -53,8 +55,13 @@ export class RealMailerClient implements MailerClient {
         });
     }
 
+    private async _getTransporter() {
+        this._transporter ??= this._createTransporter();
+        return await this._transporter;
+    }
+
     async sendMail(to: string, options: Options) {
-        const transporter = await this._createTransporter();
+        const transporter = await this._getTransporter();
         await transporter.sendMail({ to, ...options });
     }
 }

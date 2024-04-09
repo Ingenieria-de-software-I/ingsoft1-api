@@ -1,9 +1,9 @@
-import { Mailer } from '../../app/feedbacks/mailer';
+import { Mailer } from '../../app/system/mailer';
 import { TEST_USER_EMAIL } from '../constants';
 import { MailerClientStub } from '../stubs/mailer-client-stub';
 import { assert, createTestSuite } from '../utils';
 
-const [test, xtest] = createTestSuite('Mail');
+const [test, xtest] = createTestSuite('Mailer');
 
 let mailer: Mailer;
 let mailerClientStub: MailerClientStub;
@@ -29,7 +29,6 @@ test('Template nota_ejercicio', () => {
     const context = {
         ejercicio: 'Ejecicio',
         grupo: 'Grupo',
-        email: TEST_USER_EMAIL,
         corrector: 'Corrector',
         nota: 'NOTA',
         correcciones: 'Esta es la corrección',

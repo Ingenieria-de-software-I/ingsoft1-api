@@ -1,4 +1,4 @@
-import { MailerClient } from '../../app/feedbacks/mailer';
+import { MailerClient } from '../../app/system/mailer';
 
 export class MailerClientStub implements MailerClient {
     sendMail: MailerClient['sendMail'] = async () => {

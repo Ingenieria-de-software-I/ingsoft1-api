@@ -1,6 +1,10 @@
 export class Response {
     constructor(public code: number, public message: string) {}
 
+    json() {
+        return JSON.parse(this.message);
+    }
+
     static ok(message: string): Response {
         return new this(200, message);
     }

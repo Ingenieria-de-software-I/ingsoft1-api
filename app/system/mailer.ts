@@ -8,7 +8,11 @@ export type Options = {
     replyTo?: string;
 };
 
-export type ExerciseFeedbackContext = {
+export interface MailerClient {
+    sendMail(to: string, options: Options): Promise<void>;
+}
+
+type ExerciseFeedbackContext = {
     ejercicio: string;
     grupo: string;
     corrector: string;
@@ -16,7 +20,7 @@ export type ExerciseFeedbackContext = {
     correcciones: string;
 };
 
-export type ExamFeedbackContext = {
+type ExamFeedbackContext = {
     examen: string;
     nombre: string;
     padron: string;
@@ -32,10 +36,6 @@ type Mail<Context> = { to: string; context: Context };
 export type MailExerciseFeedback = Mail<ExerciseFeedbackContext>;
 
 export type MailExamFeedback = Mail<ExamFeedbackContext>;
-
-export interface MailerClient {
-    sendMail(to: string, options: Options): Promise<void>;
-}
 
 const env = nunjucks
     .configure('templates')

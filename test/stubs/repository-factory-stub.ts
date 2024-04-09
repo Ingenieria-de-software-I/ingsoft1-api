@@ -1,21 +1,19 @@
 import {
-    AssignerRepository,
-    AssignerRepositoryFactory,
     Config,
-} from '../../app/feedbacks/assigner';
+    Repository,
+    RepositoryFactory,
+} from '../../app/system/assigner';
 
-export class AssignerRepositoryFactoryStub
-    implements AssignerRepositoryFactory
-{
-    forExam(config: Config): AssignerRepository {
+export class RepositoryFactoryStub implements RepositoryFactory {
+    forExam(config: Config): Repository {
         return this._repositoryBehaviours;
     }
 
-    forExercise(config: Config): AssignerRepository {
+    forExercise(config: Config): Repository {
         return this._repositoryBehaviours;
     }
 
-    changeBehaviour(newBehaviours: Partial<AssignerRepository>) {
+    changeBehaviour(newBehaviours: Partial<Repository>) {
         Object.assign(this._repositoryBehaviours, newBehaviours);
     }
 

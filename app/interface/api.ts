@@ -1,9 +1,9 @@
 import { Client } from '@notionhq/client';
 import axios from 'axios';
 
-import { Assigner, Assignment, Config } from '../feedbacks/assigner';
-import { Mailer } from '../feedbacks/mailer';
-import { MailExamFeedback, MailExerciseFeedback } from '../feedbacks/mailer';
+import { Assigner, Assignment, Config } from '../system/assigner';
+import { Mailer } from '../system/mailer';
+import { MailExamFeedback, MailExerciseFeedback } from '../system/mailer';
 import { getContentFromBlock } from '../persistance/notion/blocks';
 import { Request } from './request';
 import { Response } from './response';
@@ -34,13 +34,11 @@ export class Api {
         } catch (error) {
             return Response.badRequest(String(error));
         }
-
         try {
             await this._services.mailer.sendExerciseFeedback(context, to);
         } catch (error) {
             return Response.error(String(error));
         }
-
         return Response.ok(`Correo enviado a ${to}`);
     };
 
@@ -63,13 +61,11 @@ export class Api {
         } catch (error) {
             return Response.badRequest(String(error));
         }
-
         try {
             await this._services.mailer.sendExamFeedback(context, to);
         } catch (error) {
             return Response.error(String(error));
         }
-
         return Response.ok(`Correo enviado a ${to}`);
     };
 
@@ -79,13 +75,11 @@ export class Api {
         } catch (error) {
             return Response.badRequest(String(error));
         }
-
         try {
             await this._services.assigner.assignExercise(config, asignaciones);
         } catch (error) {
             return Response.error(String(error));
         }
-
         return Response.ok(`Fin asignación de ejercicio`);
     };
 
@@ -95,28 +89,46 @@ export class Api {
         } catch (error) {
             return Response.badRequest(String(error));
         }
-
         try {
             await this._services.assigner.assignExercise(config, asignaciones);
         } catch (error) {
             return Response.error(String(error));
         }
-
         return Response.ok(`Fin asignación de examen`);
     };
 
-    getTeachersEmailsHandler: Handler = async () => {
-        const source =
-            'https://raw.githubusercontent.com/Ingenieria-de-software-I/ingenieria-de-software-i.github.io/main/_data/docentes.json';
+    getExerciseFeedbacksHandler: Handler = async (params) => {
+        try {
+            var { config, ejercicio } = this._parseGetFeedbackRequest(params);
+        } catch (error) {
+            return Response.badRequest(String(error));
+        }
+        try {
+            var feedbacks = await this._services.assigner.getExerciseFeedbacks(
+                config,
+                ejercicio,
+            );
+        } catch (error) {
+            return Response.error(String(error));
+        }
+        return Response.ok(JSON.stringify(feedbacks));
+    };
 
-        const results: Array<{ email?: string }> = await axios
-            .get(source, {})
-            .then((res) => res.data);
-        const emails = results
-            .map((d) => d.email)
-            .filter(Boolean)
-            .join(', ');
-        return Response.ok(emails);
+    getExamFeedbacksHandler: Handler = async (params) => {
+        try {
+            var { config, ejercicio } = this._parseGetFeedbackRequest(params);
+        } catch (error) {
+            return Response.badRequest(String(error));
+        }
+        try {
+            var feedbacks = await this._services.assigner.getExamFeedbacks(
+                config,
+                ejercicio,
+            );
+        } catch (error) {
+            return Response.error(String(error));
+        }
+        return Response.ok(JSON.stringify(feedbacks));
     };
 
     getContentFromPageHandler: Handler = async (params) => {
@@ -138,13 +150,25 @@ export class Api {
         return Response.ok(content);
     };
 
+    getTeachersEmailsHandler: Handler = async () => {
+        const source =
+            'https://raw.githubusercontent.com/Ingenieria-de-software-I/ingenieria-de-software-i.github.io/main/_data/docentes.json';
+        const results: Array<{ email?: string }> = await axios
+            .get(source, {})
+            .then((res) => res.data);
+        const emails = results
+            .map((d) => d.email)
+            .filter(Boolean)
+            .join(', ');
+        return Response.ok(emails);
+    };
+
     testHandler: Handler = async () => {
         return Response.ok('OK');
     };
 
-    private _parseAssignRequest(params: unknown) {
-        const request = new Request(params);
-        var config: Config = {
+    private _parseNotionConfig(request: Request): Config {
+        return {
             notion: {
                 token: request.parseString('config.notion.token'),
                 db_devolucion: request.parseString(
@@ -154,13 +178,34 @@ export class Api {
                 db_ejercicio: request.parseString('config.notion.db_ejercicio'),
             },
         };
-        var asignaciones: Assignment[] = request.map('asignaciones', (req) => ({
-            docentes: req.map('docentes', (req) =>
-                req.parseString('toString()'),
-            ),
-            ejercicio: req.parseString('ejercicio'),
-            nombre: req.parseString('nombre'),
-        }));
+    }
+
+    private _parseAssignRequest(params: unknown): {
+        config: Config;
+        asignaciones: Array<Assignment>;
+    } {
+        const request = new Request(params);
+        const config = this._parseNotionConfig(request);
+        const asignaciones: Array<Assignment> = request.map(
+            'asignaciones',
+            (req) => ({
+                docentes: req.map('docentes', (req) =>
+                    req.parseString('toString()'),
+                ),
+                ejercicio: req.parseString('ejercicio'),
+                nombre: req.parseString('nombre'),
+            }),
+        );
         return { config, asignaciones };
+    }
+
+    private _parseGetFeedbackRequest(params: unknown): {
+        config: Config;
+        ejercicio: string;
+    } {
+        const request = new Request(params);
+        const config = this._parseNotionConfig(request);
+        const ejercicio = request.parseString('ejercicio');
+        return { config, ejercicio };
     }
 }

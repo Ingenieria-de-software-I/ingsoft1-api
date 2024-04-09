@@ -1,25 +1,25 @@
-import { Assigner } from '../../app/feedbacks/assigner';
-import { Mailer } from '../../app/feedbacks/mailer';
-import { Api } from '../../app/interfaces/api';
-import { Request } from '../../app/interfaces/request';
-import { Response } from '../../app/interfaces/response';
+import { Assigner } from '../../app/system/assigner';
+import { Mailer } from '../../app/system/mailer';
+import { Api } from '../../app/interface/api';
+import { Request } from '../../app/interface/request';
+import { Response } from '../../app/interface/response';
 import * as constants from '../constants';
-import { AssignerRepositoryFactoryStub } from '../stubs/assigner-repository-factory-stub';
 import { MailerClientStub } from '../stubs/mailer-client-stub';
+import { RepositoryFactoryStub } from '../stubs/repository-factory-stub';
 import { assert, createTestSuite } from '../utils';
 
-const [test, xtest] = createTestSuite('HTTP');
+const [test, xtest] = createTestSuite('Api');
 
 let api: Api;
 let mailerClientStub: MailerClientStub;
-let assignerRepositoryFactory: AssignerRepositoryFactoryStub;
+let repositoryFactory: RepositoryFactoryStub;
 
 test.before(() => {
     mailerClientStub = new MailerClientStub();
-    assignerRepositoryFactory = new AssignerRepositoryFactoryStub();
+    repositoryFactory = new RepositoryFactoryStub();
     api = new Api({
         mailer: new Mailer(mailerClientStub),
-        assigner: new Assigner(assignerRepositoryFactory),
+        assigner: new Assigner(repositoryFactory),
     });
 });
 
@@ -27,11 +27,6 @@ const assertCode = (res: Response, c: number) => assert.equal(res.code, c);
 const assertBadResponse = (res: Response) => assertCode(res, 400);
 const assertErrorResponse = (res: Response) => assertCode(res, 500);
 const assertOkResponse = (res: Response) => assertCode(res, 200);
-
-test("Get teachers' emails", async () => {
-    const okResponse = await api.getTeachersEmailsHandler({});
-    assertOkResponse(okResponse);
-});
 
 test('Parse request', () => {
     const params = {
@@ -66,7 +61,7 @@ test('Parse request', () => {
     });
 });
 
-test('Send mail exercise feedback', async () => {
+test('Send exercise feedback', async () => {
     const badResponse = await api.sendExerciseFeedbackHandler({});
     assertBadResponse(badResponse);
 
@@ -91,7 +86,7 @@ test('Send mail exercise feedback', async () => {
     assertOkResponse(okResponse);
 });
 
-test('Send mail exam feedback', async () => {
+test('Send exam feedback', async () => {
     const badResponse = await api.sendExamFeedbackHandler({});
     assertBadResponse(badResponse);
 
@@ -141,7 +136,7 @@ test('Assign exercise', async () => {
     const errorResponse = await api.assignExerciseHandler({ ...params });
     assertErrorResponse(errorResponse);
 
-    assignerRepositoryFactory.changeBehaviour({
+    repositoryFactory.changeBehaviour({
         getExercisesFrom(assigments) {
             return Promise.resolve([]);
         },
@@ -186,7 +181,7 @@ test('Assign exam', async () => {
     const errorResponse = await api.assignExamHandler({ ...params });
     assertErrorResponse(errorResponse);
 
-    assignerRepositoryFactory.changeBehaviour({
+    repositoryFactory.changeBehaviour({
         getExercisesFrom(assigments) {
             return Promise.resolve([]);
         },
@@ -207,11 +202,76 @@ test('Assign exam', async () => {
     assertOkResponse(okResponse);
 });
 
-test("Get teachers' emails", async () => {
-    const response = await api.getTeachersEmailsHandler({});
-    assertOkResponse(response);
+test('Get exercise feedbacks', async () => {
+    const badResponse = await api.getExerciseFeedbacksHandler({});
+    assertBadResponse(badResponse);
 
-    assert(response.message.length > 0);
+    const config = {
+        notion: {
+            token: 'notion.token',
+            db_devolucion: 'notion.db_devolucion',
+            db_docente: 'notion.db_docente',
+            db_ejercicio: 'notion.db_ejercicio',
+        },
+    };
+    const ejercicio = "ejercicio 1"
+    const params = { config, ejercicio };
+    const errorResponse = await api.getExerciseFeedbacksHandler({ ...params });
+    assertErrorResponse(errorResponse);
+
+    repositoryFactory.changeBehaviour({
+        getExercisesFrom(assigments) {
+            return Promise.resolve([{ id: '1', nombre: ejercicio }]);
+        },
+        getFeedbacksFrom(exercises) {
+            return Promise.resolve([
+                {
+                    id: '1',
+                    nombre: 'grupo 1',
+                    id_ejercicio: '1',
+                    id_docentes: [],
+                },
+            ]);
+        },
+    });
+    const okResponse = await api.getExerciseFeedbacksHandler({ ...params });
+    assertOkResponse(okResponse);
+});
+
+test('Get exam feedbacks', async () => {
+    const badResponse = await api.getExamFeedbacksHandler({});
+    assertBadResponse(badResponse);
+
+    const config = {
+        notion: {
+            token: 'notion.token',
+            db_devolucion: 'notion.db_devolucion',
+            db_docente: 'notion.db_docente',
+            db_ejercicio: 'notion.db_ejercicio',
+        },
+    };
+    const ejercicio = "examen 1";
+    const params = { config, ejercicio };
+    const errorResponse = await api.getExamFeedbacksHandler({ ...params });
+    assertErrorResponse(errorResponse);
+    
+    repositoryFactory.changeBehaviour({
+        getExercisesFrom(assigments) {
+            return Promise.resolve([{ id: '1', nombre: ejercicio }]);
+        },
+        getFeedbacksFrom(exercises) {
+            return Promise.resolve([
+                {
+                    id: '1',
+                    nombre: 'alumno 1',
+                    id_ejercicio: '1',
+                    id_docentes: [],
+                },
+            ]);
+        },
+    });
+    const okResponse = await api.getExamFeedbacksHandler({ ...params });
+    assertOkResponse(okResponse);
 });
 
 test('Get content from page', async () => {
@@ -222,6 +282,11 @@ test('Get content from page', async () => {
         page_id: constants.TEST_NOTION_BLOCK_ID,
     });
     assertOkResponse(response);
-
     assert(response.message.length > 0);
+});
+
+test("Get teachers' emails", async () => {
+    const okResponse = await api.getTeachersEmailsHandler({});
+    assertOkResponse(okResponse);
+    assert(okResponse.message.length > 0);
 });
