@@ -1,10 +1,10 @@
 import { Client } from '@notionhq/client';
 import axios from 'axios';
 
+import { getContentFromBlock } from '../persistance/notion/blocks';
 import { Assigner, Assignment, Config } from '../system/assigner';
 import { Mailer } from '../system/mailer';
 import { MailExamFeedback, MailExerciseFeedback } from '../system/mailer';
-import { getContentFromBlock } from '../persistance/notion/blocks';
 import { Request } from './request';
 import { Response } from './response';
 

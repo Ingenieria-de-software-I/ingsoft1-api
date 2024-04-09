@@ -9,21 +9,22 @@ import { Identificable, SearchParameters } from './types';
 
 type Page = PageObjectResponse;
 
-export class Database<T> {
+export class Database<Model> {
     constructor(
         private _client: Client,
         private _databaseId: string,
-        private _schema: Schema<T>,
+        private _schema: Schema<Model>,
     ) {}
 
-    private _mapPages(pages: Page[]): Array<Identificable<T>> {
+    private _mapPages(pages: Array<Page>): Array<Identificable<Model>> {
         return pages.map((page) => this._schema.mapPage(page));
     }
 
-    async query(params: SearchParameters<T>): Promise<Array<Identificable<T>>> {
+    async query(
+        params: SearchParameters<Model>,
+    ): Promise<Array<Identificable<Model>>> {
         const queryParameters: QueryDatabaseParameters = {
             database_id: this._databaseId,
-            filter_properties: this._schema.getFilterProperties(),
         };
 
         const filters = this._schema.buildFilterFrom(params);
@@ -35,12 +36,12 @@ export class Database<T> {
         const response = await this._client.databases.query(queryParameters);
         const pages = response.results
             .map((result) => result as Page)
-            .filter((p) => p.object !== 'page');
+            .filter((p) => p.object === 'page');
 
         return this._mapPages(pages);
     }
 
-    async create(models: T[]): Promise<Array<Identificable<T>>> {
+    async create(models: Array<Model>): Promise<Array<Identificable<Model>>> {
         const pages = await Promise.all(
             models.map(async (model) => {
                 const response = await this._client.pages.create({
@@ -56,7 +57,9 @@ export class Database<T> {
         return this._mapPages(pages);
     }
 
-    async update(models: Identificable<T>[]): Promise<Array<Identificable<T>>> {
+    async update(
+        models: Array<Identificable<Model>>,
+    ): Promise<Array<Identificable<Model>>> {
         const pages = await Promise.all(
             models.map(async (model) => {
                 const response = await this._client.pages.update({
@@ -73,7 +76,7 @@ export class Database<T> {
     }
 
     async delete(
-        models: Identificable<T>[],
+        models: Array<Identificable<Model>>,
     ): Promise<Array<Identificable<{}>>> {
         const blocks = await Promise.all(
             models.map(async (model) => {

@@ -1,5 +1,13 @@
 import { Client } from '@notionhq/client';
 
+import { Database } from '../persistance/notion/database';
+import {
+    RelationWithManyProperty,
+    RelationWithOneProperty,
+    TitleProperty,
+} from '../persistance/notion/properties';
+import { Schema } from '../persistance/notion/schema';
+import { Identificable } from '../persistance/notion/types';
 import {
     Assignment,
     Config,
@@ -9,14 +17,6 @@ import {
     RepositoryFactory,
     Teacher,
 } from '../system/assigner';
-import { Database } from '../persistance/notion/database';
-import {
-    RelationWithManyProperty,
-    RelationWithOneProperty,
-    TitleProperty,
-} from '../persistance/notion/properties';
-import { Schema } from '../persistance/notion/schema';
-import { Identificable } from '../persistance/notion/types';
 
 export class RealRepositoryFactory implements RepositoryFactory {
     forExercise(config: Config): Repository {
@@ -65,7 +65,7 @@ class RealAssignerRepository implements Repository {
         assignments: Assignment[],
     ): Promise<Identificable<Exercise>[]> {
         return this._databases.exercises.query({
-            nombre: assignments.map((assignment) => assignment.nombre),
+            nombre: assignments.map((assignment) => assignment.ejercicio),
         });
     }
 

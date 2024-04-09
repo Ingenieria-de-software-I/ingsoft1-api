@@ -1,20 +1,20 @@
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
-import { Property } from './properties/Property';
+import Property from './properties/Property';
 import { Filter, Identificable, PageProperty, SearchParameters } from './types';
 
 type Properties = {
     [name: string]: PageProperty;
 };
 
-type SchemaProperties<T> = {
-    [key in keyof T]: Property<T[key]>;
+type SchemaProperties<Model> = {
+    [Key in keyof Model]: Property<Model[Key]>;
 };
 
-export class Schema<T> {
-    constructor(public properties: SchemaProperties<T>) {}
+export class Schema<Model> {
+    constructor(public properties: SchemaProperties<Model>) {}
 
-    buildFilterFrom(params: SearchParameters<T>): Filter | null {
+    buildFilterFrom(params: SearchParameters<Model>): Filter | null {
         const filters: Filter[] = [];
 
         for (const name in params) {
@@ -31,11 +31,7 @@ export class Schema<T> {
         return { and: filters } as Filter;
     }
 
-    getFilterProperties(): Array<string> {
-        return Object.keys(this.properties);
-    }
-
-    getPropertiesFrom(model: Partial<T>): Properties {
+    getPropertiesFrom(model: Partial<Model>): Properties {
         const properties: Properties = {};
 
         for (const propertyName in model) {
@@ -48,8 +44,8 @@ export class Schema<T> {
         return properties;
     }
 
-    mapPage(page: PageObjectResponse): Identificable<T> {
-        const model = { id: page.id } as Identificable<T>;
+    mapPage(page: PageObjectResponse): Identificable<Model> {
+        const model = { id: page.id } as Identificable<Model>;
         const properties = page.properties as Properties;
 
         if (!properties) return model;

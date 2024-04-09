@@ -77,7 +77,7 @@ export class Assigner {
 }
 
 class InternalAssigner {
-    private _feedbackToBeCreated: Array<Feedback> = [];
+    private _feedbacksToBeCreated: Array<Feedback> = [];
     private _feedbacksToBeUpdated: Array<Identificable<Feedback>> = [];
 
     private constructor(
@@ -135,7 +135,7 @@ class InternalAssigner {
         exercise: Identificable<Exercise>,
         teacherIds: string[],
     ) {
-        this._feedbackToBeCreated.push({
+        this._feedbacksToBeCreated.push({
             nombre: assignment.nombre,
             id_ejercicio: exercise.id,
             id_docentes: teacherIds,
@@ -154,7 +154,7 @@ class InternalAssigner {
 
     private async _submit() {
         await Promise.allSettled([
-            this._repository.createFeedbacks(this._feedbackToBeCreated),
+            this._repository.createFeedbacks(this._feedbacksToBeCreated),
             this._repository.updateFeedbacks(this._feedbacksToBeUpdated),
         ]);
     }

@@ -1,6 +1,6 @@
+import { Api } from '../interface/api';
 import { Assigner } from '../system/assigner';
 import { Mailer } from '../system/mailer';
-import { Api } from '../interface/api';
 import * as constants from './constants';
 import { RealMailerClient } from './mailer-client';
 import { RealRepositoryFactory } from './repository-factory';
