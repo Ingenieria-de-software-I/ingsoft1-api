@@ -97,13 +97,13 @@ class InternalAssigner {
         ]);
         const storedFeedbacks = await this._getFeedbacksFrom(exercises);
 
-        for (const assigment of this._assignments) {
+        for (const assignment of this._assignments) {
             const exercise = exercises.find(
-                (exercise) => exercise.nombre === assigment.ejercicio,
+                (exercise) => exercise.nombre === assignment.ejercicio,
             );
             const teachersId = teachers
                 .filter((teacher) =>
-                    assigment.docentes.includes(teacher.nombre),
+                    assignment.docentes.includes(teacher.nombre),
                 )
                 .map((teacher) => teacher.id);
 
@@ -112,10 +112,10 @@ class InternalAssigner {
             const storedFeedback = storedFeedbacks.find(
                 (feedback) =>
                     feedback.id_ejercicio == exercise.id &&
-                    feedback.nombre === assigment.nombre,
+                    feedback.nombre === assignment.nombre,
             );
             if (!storedFeedback) {
-                this._createFeedback(assigment, exercise, teachersId);
+                this._createFeedback(assignment, exercise, teachersId);
                 continue;
             }
             if (
@@ -178,8 +178,8 @@ class InternalAssigner {
         return await this._getFeedbacksFrom(exercises);
     }
 
-    static assign(repository: Repository, assigments: Array<Assignment>) {
-        return new this(repository, assigments)._assign();
+    static assign(repository: Repository, assignments: Array<Assignment>) {
+        return new this(repository, assignments)._assign();
     }
 
     static getFeedbacks(repository: Repository, exercise: string) {

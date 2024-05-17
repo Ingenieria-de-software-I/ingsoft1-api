@@ -90,7 +90,7 @@ export class Api {
             return Response.badRequest(String(error));
         }
         try {
-            await this._services.assigner.assignExercise(config, asignaciones);
+            await this._services.assigner.assignExam(config, asignaciones);
         } catch (error) {
             return Response.error(String(error));
         }

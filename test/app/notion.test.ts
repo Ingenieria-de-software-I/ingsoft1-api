@@ -41,13 +41,17 @@ test('Test Real Repository', async () => {
     const e = await repository.getExercisesFrom(assignments);
     const t = await repository.getTeachersFrom(assignments);
     const f = await repository.getFeedbacksFrom(e);
-    const c = await repository.createFeedbacks([{
-        nombre: "Grupo X",
-        id_docentes: t.map(x => x.id),
-        id_ejercicio: e.map(x=> x.id)[0],
-    } ])
-    const u = await repository.updateFeedbacks([{
-        ...c[0],
-        nombre: "Grupo XX",
-    } ])
+    const c = await repository.createFeedbacks([
+        {
+            nombre: 'Grupo X',
+            id_docentes: t.map((x) => x.id),
+            id_ejercicio: e.map((x) => x.id)[0],
+        },
+    ]);
+    const u = await repository.updateFeedbacks([
+        {
+            ...c[0],
+            nombre: 'Grupo XX',
+        },
+    ]);
 });
