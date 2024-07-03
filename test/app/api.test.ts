@@ -81,7 +81,7 @@ test('Send exercise feedback', async () => {
     });
     assertErrorResponse(errorResponse);
 
-    mailerClientStub.changeBehaviour(async () => {});
+    mailerClientStub.changeBehaviour(async () => 'ok');
     const okResponse = await api.sendExerciseFeedbackHandler({ ...params });
     assertOkResponse(okResponse);
 });
@@ -107,7 +107,7 @@ test('Send exam feedback', async () => {
     const errorResponse = await api.sendExamFeedbackHandler({ ...params });
     assertErrorResponse(errorResponse);
 
-    mailerClientStub.changeBehaviour(async () => {});
+    mailerClientStub.changeBehaviour(async () => 'ok');
     const okResponse = await api.sendExamFeedbackHandler({ ...params });
     assertOkResponse(okResponse);
 });

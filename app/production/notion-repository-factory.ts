@@ -18,7 +18,7 @@ import {
     Teacher,
 } from '../system/assigner';
 
-export class RealRepositoryFactory implements RepositoryFactory {
+export class NotionRepositoryFactory implements RepositoryFactory {
     forExercise(config: Config): Repository {
         return this._repositoryForFeedbacks(config, exerciseFeedbackSchema);
     }
@@ -32,7 +32,7 @@ export class RealRepositoryFactory implements RepositoryFactory {
         feedbackSchema: Schema<Feedback>,
     ): Repository {
         const client = new Client({ auth: config.notion.token });
-        return new RealAssignerRepository({
+        return new NotionRepository({
             exercises: new Database(
                 client,
                 config.notion.db_ejercicio,
@@ -52,7 +52,7 @@ export class RealRepositoryFactory implements RepositoryFactory {
     }
 }
 
-class RealAssignerRepository implements Repository {
+class NotionRepository implements Repository {
     constructor(
         private _databases: {
             exercises: Database<Exercise>;

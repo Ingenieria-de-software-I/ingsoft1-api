@@ -9,7 +9,7 @@ export type Options = {
 };
 
 export interface MailerClient {
-    sendMail(to: string, options: Options): Promise<void>;
+    sendMail(to: string, options: Options): Promise<string>;
 }
 
 type ExerciseFeedbackContext = {
@@ -31,25 +31,27 @@ type ExamFeedbackContext = {
     nota_final: string;
 };
 
-type Ejercicio = { 
+type Ejercicio = {
     nota: string;
     nombre: string;
-}
+};
 
 type SummaryFeedbackContext = {
-    nombre: string;
+    curso: string;
+    estudiante: string;
     padron: string;
     ejercicios: Ejercicio[];
-    nota_cursada_final: string;
     promedio_ejercicios: string;
-    promedio_ej_primer_parcial: string;
-    primer_parcial: string;
-    segundo_parcial: string;
+    parcial: string;
     primer_recu: string;
-    condicion_final: string;
+    segundo_recu: string;
+    parcial_final: string;
+    promedio_ej_y_parcial: string;
     punto_adicional: string;
     nota_cursada: string;
-    segundo_recu: string;
+    nota_cursada_final: string;
+    condicion_final: string; // 'Promociona' | 'A Final' | 'Recursa'
+    fecha_finales: string[];
 };
 
 type Mail<Context> = { to: string; context: Context };
@@ -72,13 +74,10 @@ const env = nunjucks
     });
 
 export class Mailer {
-    constructor(
-        private _mailerClient: MailerClient,
-        private _replyTo?: string,
-    ) {}
+    constructor(private _mailerClient: MailerClient) {}
 
     private async _sendMail(to: string, options: Options) {
-        await this._mailerClient.sendMail(to, options);
+        return this._mailerClient.sendMail(to, options);
     }
 
     private _render(name: string, context: object) {
@@ -91,13 +90,12 @@ export class Mailer {
         const subject = `Correción de ejercicio ${context.ejercicio} - Grupo ${context.grupo}`;
         const text = this._render(`emails/notas_ejercicio_plain.html`, context);
         const html = this._render(`emails/notas_ejercicio.html`, context);
-        const replyTo = this._replyTo;
-        return { subject, text, html, replyTo };
+        return { subject, text, html };
     }
 
-    async sendExerciseFeedback(context: ExerciseFeedbackContext, to: string) {
+    sendExerciseFeedback(context: ExerciseFeedbackContext, to: string) {
         const options = this._buildMailOptionsForExerciseFeedback(context);
-        await this._sendMail(to, options);
+        return this._sendMail(to, options);
     }
 
     private _buildMailOptionsForExamFeedback(
@@ -106,27 +104,25 @@ export class Mailer {
         const subject = `Corrección de ${context.examen} - Padrón ${context.padron}`;
         const text = this._render(`emails/notas_examen_plain.html`, context);
         const html = this._render(`emails/notas_examen.html`, context);
-        const replyTo = this._replyTo;
-        return { subject, text, html, replyTo };
+        return { subject, text, html };
     }
 
-    async sendExamFeedback(context: ExamFeedbackContext, to: string) {
+    sendExamFeedback(context: ExamFeedbackContext, to: string) {
         const options = this._buildMailOptionsForExamFeedback(context);
-        await this._sendMail(to, options);
+        return this._sendMail(to, options);
     }
 
     private _buildMailOptionsForSummaryFeedback(
         context: SummaryFeedbackContext,
     ): Options {
         const subject = `Resumen de cursada - Padrón ${context.padron}`;
-        const text = this._render(`emails/notas_examen_plain.html`, context);
-        const html = this._render(`emails/notas_examen.html`, context);
-        const replyTo = this._replyTo;
-        return { subject, text, html, replyTo };
+        const text = this._render(`emails/summary_grades_plain.html`, context);
+        const html = this._render(`emails/summary_grades.html`, context);
+        return { subject, text, html };
     }
 
-    async sendSummaryFeedback(context: SummaryFeedbackContext, to: string) {
+    sendSummaryFeedback(context: SummaryFeedbackContext, to: string) {
         const options = this._buildMailOptionsForSummaryFeedback(context);
-        await this._sendMail(to, options);
+        return this._sendMail(to, options);
     }
 }

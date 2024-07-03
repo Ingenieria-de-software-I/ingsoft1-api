@@ -2,7 +2,7 @@ import { Client } from '@notionhq/client';
 import { assert } from 'console';
 
 import { getContentFromBlock } from '../../app/persistance/notion/blocks';
-import { RealRepositoryFactory } from '../../app/production/repository-factory';
+import { NotionRepositoryFactory } from '../../app/production/notion-repository-factory';
 import * as constants from '../constants';
 import { createTestSuite } from '../utils';
 
@@ -22,7 +22,7 @@ test('Get page content', async () => {
 });
 
 test('Test Real Repository', async () => {
-    const repositoryFactory = new RealRepositoryFactory();
+    const repositoryFactory = new NotionRepositoryFactory();
     const repository = repositoryFactory.forExercise({
         notion: {
             token: constants.TEST_NOTION_TOKEN,

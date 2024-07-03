@@ -4,11 +4,13 @@ import axios from 'axios';
 import { getContentFromBlock } from '../persistance/notion/blocks';
 import { Assigner, Assignment, Config } from '../system/assigner';
 import { Mailer } from '../system/mailer';
-import { MailExamFeedback, MailExerciseFeedback, MailSummaryFeedback } from '../system/mailer';
+import {
+    MailExamFeedback,
+    MailExerciseFeedback,
+    MailSummaryFeedback,
+} from '../system/mailer';
+import handler from './handler';
 import { Request } from './request';
-import { Response } from './response';
-
-type Handler = (params: unknown) => Promise<Response>;
 
 export class Api {
     constructor(
@@ -18,170 +20,115 @@ export class Api {
         },
     ) {}
 
-    sendSummaryFeedbackHandler: Handler = async (params) => {
-        try {
-            const request = new Request(params);
-            var { to, context }: MailSummaryFeedback = {
-                to: request.parseString('to'),
-                context: {
-                    nombre: request.parseString('student.full_name'),
-                    ejercicios: request.parseString('summary.ejercicios'), // TODO: parsear a array
-                    nota_cursada_final: request.parseString('summary.grade_final_completed'),
-                    promedio_ejercicios: request.parseString('summary.prom_ej'),
-                    promedio_ej_primer_parcial: request.parseString('summary.prom_ej_1p'),
-                    primer_parcial: request.parseString('summary.fist_parcial'),
-                    segundo_parcial: request.parseString('summary.second_parcial_papers'),
-                    primer_recu: request.parseString('summary.first_recu_papers'),
-                    condicion_final: request.parseString('summary.final_condition'),
-                    punto_adicional: request.parseString('summary.extra_point'),
-                    nota_cursada: request.parseString('summary.grade_completed'),
-                    segundo_recu: request.parseString('summary.second_recu'),
-                },
-            };
-        } catch (error) {
-            return Response.badRequest(String(error));
-        }
-        try {
-            await this._services.mailer.sendSummaryFeedback(context, to);
-        } catch (error) {
-            return Response.error(String(error));
-        }
-        return Response.ok(`Correo enviado a ${to}`);
-    };
+    //#region handlers
 
-    sendExerciseFeedbackHandler: Handler = async (params) => {
-        try {
-            const request = new Request(params);
-            var { to, context }: MailExerciseFeedback = {
-                to: request.parseString('to'),
-                context: {
-                    ejercicio: request.parseString('context.ejercicio'),
-                    grupo: request.parseString('context.grupo'),
-                    corrector: request.parseString('context.corrector'),
-                    nota: request.parseString('context.nota'),
-                    correcciones: request.parseString('context.correcciones'),
-                },
-            };
-        } catch (error) {
-            return Response.badRequest(String(error));
-        }
-        try {
-            await this._services.mailer.sendExerciseFeedback(context, to);
-        } catch (error) {
-            return Response.error(String(error));
-        }
-        return Response.ok(`Correo enviado a ${to}`);
-    };
+    sendSummaryFeedbackHandler = handler(async (request) => {
+        const { to, context }: MailSummaryFeedback = {
+            to: request.parseString('to'),
+            context: {
+                curso: request.parseString('context.curso'),
+                estudiante: request.parseString('context.estudiante'),
+                padron: request.parseString('context.padron'),
+                ejercicios: request.map('context.ejercicios', (req) => ({
+                    nombre: req.parseString('nombre'),
+                    nota: req.parseString('nota'),
+                })),
+                promedio_ejercicios: request.parseString(
+                    'context.promedio_ejercicios',
+                ),
+                parcial: request.parseString('context.parcial'),
+                primer_recu: request.parseString('context.primer_recu'),
+                segundo_recu: request.parseString('context.segundo_recu'),
+                parcial_final: request.parseString('context.parcial_final'),
+                promedio_ej_y_parcial: request.parseString(
+                    'context.promedio_ej_y_parcial',
+                ),
+                punto_adicional: request.parseString('context.punto_adicional'),
+                nota_cursada: request.parseString('context.nota_cursada'),
+                nota_cursada_final: request.parseString(
+                    'context.nota_cursada_final',
+                ),
+                condicion_final: request.parseString('context.condicion_final'),
+                fecha_finales: request.map('context.fecha_finales', (req) =>
+                    req.parseString('toString()'),
+                ),
+            },
+        };
+        return await this._services.mailer.sendSummaryFeedback(context, to);
+    });
 
-    sendExamFeedbackHandler: Handler = async (params) => {
-        try {
-            const request = new Request(params);
-            var { to, context }: MailExamFeedback = {
-                to: request.parseString('to'),
-                context: {
-                    examen: request.parseString('context.examen'),
-                    padron: request.parseString('context.padron'),
-                    nombre: request.parseString('context.nombre'),
-                    corrector: request.parseString('context.corrector'),
-                    nota: request.parseString('context.nota'),
-                    correcciones: request.parseString('context.correcciones'),
-                    nota_final: request.parseString('context.nota_final'),
-                    puntos_extras: request.parseString('context.puntos_extras'),
-                },
-            };
-        } catch (error) {
-            return Response.badRequest(String(error));
-        }
-        try {
-            await this._services.mailer.sendExamFeedback(context, to);
-        } catch (error) {
-            return Response.error(String(error));
-        }
-        return Response.ok(`Correo enviado a ${to}`);
-    };
+    sendExerciseFeedbackHandler = handler(async (request) => {
+        const { to, context }: MailExerciseFeedback = {
+            to: request.parseString('to'),
+            context: {
+                ejercicio: request.parseString('context.ejercicio'),
+                grupo: request.parseString('context.grupo'),
+                corrector: request.parseString('context.corrector'),
+                nota: request.parseString('context.nota'),
+                correcciones: request.parseString('context.correcciones'),
+            },
+        };
+        return await this._services.mailer.sendExerciseFeedback(context, to);
+    });
 
-    assignExerciseHandler: Handler = async (params) => {
-        try {
-            var { config, asignaciones } = this._parseAssignRequest(params);
-        } catch (error) {
-            return Response.badRequest(String(error));
-        }
-        try {
-            await this._services.assigner.assignExercise(config, asignaciones);
-        } catch (error) {
-            return Response.error(String(error));
-        }
-        return Response.ok(`Fin asignación de ejercicio`);
-    };
+    sendExamFeedbackHandler = handler(async (request) => {
+        const { to, context }: MailExamFeedback = {
+            to: request.parseString('to'),
+            context: {
+                examen: request.parseString('context.examen'),
+                padron: request.parseString('context.padron'),
+                nombre: request.parseString('context.nombre'),
+                corrector: request.parseString('context.corrector'),
+                nota: request.parseString('context.nota'),
+                correcciones: request.parseString('context.correcciones'),
+                nota_final: request.parseString('context.nota_final'),
+                puntos_extras: request.parseString('context.puntos_extras'),
+            },
+        };
+        return await this._services.mailer.sendExamFeedback(context, to);
+    });
 
-    assignExamHandler: Handler = async (params) => {
-        try {
-            var { config, asignaciones } = this._parseAssignRequest(params);
-        } catch (error) {
-            return Response.badRequest(String(error));
-        }
-        try {
-            await this._services.assigner.assignExam(config, asignaciones);
-        } catch (error) {
-            return Response.error(String(error));
-        }
-        return Response.ok(`Fin asignación de examen`);
-    };
+    assignExerciseHandler = handler(async (request) => {
+        const { config, asignaciones } = this._parseAssignRequest(request);
+        await this._services.assigner.assignExercise(config, asignaciones);
+        return `Fin asignación de ejercicio`;
+    });
 
-    getExerciseFeedbacksHandler: Handler = async (params) => {
-        try {
-            var { config, ejercicio } = this._parseGetFeedbackRequest(params);
-        } catch (error) {
-            return Response.badRequest(String(error));
-        }
-        try {
-            var feedbacks = await this._services.assigner.getExerciseFeedbacks(
-                config,
-                ejercicio,
-            );
-        } catch (error) {
-            return Response.error(String(error));
-        }
-        return Response.ok(JSON.stringify(feedbacks));
-    };
+    assignExamHandler = handler(async (request) => {
+        const { config, asignaciones } = this._parseAssignRequest(request);
+        await this._services.assigner.assignExam(config, asignaciones);
+        return `Fin asignación de examen`;
+    });
 
-    getExamFeedbacksHandler: Handler = async (params) => {
-        try {
-            var { config, ejercicio } = this._parseGetFeedbackRequest(params);
-        } catch (error) {
-            return Response.badRequest(String(error));
-        }
-        try {
-            var feedbacks = await this._services.assigner.getExamFeedbacks(
-                config,
-                ejercicio,
-            );
-        } catch (error) {
-            return Response.error(String(error));
-        }
-        return Response.ok(JSON.stringify(feedbacks));
-    };
+    getExerciseFeedbacksHandler = handler(async (request) => {
+        const { config, ejercicio } = this._parseGetFeedbackRequest(request);
+        const feedbacks = await this._services.assigner.getExerciseFeedbacks(
+            config,
+            ejercicio,
+        );
+        return JSON.stringify(feedbacks);
+    });
 
-    getContentFromPageHandler: Handler = async (params) => {
-        try {
-            const request = new Request(params);
-            var token = request.parseString('notion.token');
-            var blockId = request.parseString('page_id');
-        } catch (error) {
-            return Response.badRequest(String(error));
-        }
-        try {
-            var content = await getContentFromBlock(
-                new Client({ auth: token }),
-                blockId,
-            );
-        } catch (error) {
-            return Response.error(String(error));
-        }
-        return Response.ok(content);
-    };
+    getExamFeedbacksHandler = handler(async (request) => {
+        const { config, ejercicio } = this._parseGetFeedbackRequest(request);
+        const feedbacks = await this._services.assigner.getExamFeedbacks(
+            config,
+            ejercicio,
+        );
+        return JSON.stringify(feedbacks);
+    });
 
-    getTeachersEmailsHandler: Handler = async () => {
+    getContentFromPageHandler = handler(async (request) => {
+        const token = request.parseString('notion.token');
+        const blockId = request.parseString('page_id');
+        const content = await getContentFromBlock(
+            new Client({ auth: token }),
+            blockId,
+        );
+        return content;
+    });
+
+    getTeachersEmailsHandler = handler(async () => {
         const source =
             'https://raw.githubusercontent.com/Ingenieria-de-software-I/ingenieria-de-software-i.github.io/main/_data/docentes.json';
         const results: Array<{ email?: string }> = await axios
@@ -191,12 +138,14 @@ export class Api {
             .map((d) => d.email)
             .filter(Boolean)
             .join(', ');
-        return Response.ok(emails);
-    };
+        return emails;
+    });
 
-    testHandler: Handler = async () => {
-        return Response.ok('OK');
-    };
+    testHandler = handler(async () => 'OK');
+
+    //#endregion
+
+    //#region parsing
 
     private _parseNotionConfig(request: Request): Config {
         return {
@@ -211,11 +160,10 @@ export class Api {
         };
     }
 
-    private _parseAssignRequest(params: unknown): {
+    private _parseAssignRequest(request: Request): {
         config: Config;
         asignaciones: Array<Assignment>;
     } {
-        const request = new Request(params);
         const config = this._parseNotionConfig(request);
         const asignaciones: Array<Assignment> = request.map(
             'asignaciones',
@@ -230,13 +178,14 @@ export class Api {
         return { config, asignaciones };
     }
 
-    private _parseGetFeedbackRequest(params: unknown): {
+    private _parseGetFeedbackRequest(request: Request): {
         config: Config;
         ejercicio: string;
     } {
-        const request = new Request(params);
         const config = this._parseNotionConfig(request);
         const ejercicio = request.parseString('ejercicio');
         return { config, ejercicio };
     }
+
+    //#endregion
 }
