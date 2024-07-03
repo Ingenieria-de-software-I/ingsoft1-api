@@ -22,10 +22,11 @@ const changeStubBehaviourToAssertContent = (
         assert(options.subject.includes(subject));
         text.split('\n').forEach((line) => assert(options.text.includes(line)));
         html.split('\n').forEach((line) => assert(options.html.includes(line)));
+        return 'ok';
     });
 };
 
-test('Template nota_ejercicio', () => {
+test('Template nota_ejercicio', async () => {
     const context = {
         ejercicio: 'Ejecicio',
         grupo: 'Grupo',
@@ -43,10 +44,10 @@ Hola, este mail es para darles la devolución del ejercicio ${context.ejercicio}
 <p>Hola, este mail es para darles la devolución del ejercicio ${context.ejercicio}, su nota es <strong>${context.nota}</strong>.</p>`;
 
     changeStubBehaviourToAssertContent(subject, text, html);
-    mailer.sendExerciseFeedback(context, TEST_USER_EMAIL);
+    await mailer.sendExerciseFeedback(context, TEST_USER_EMAIL);
 });
 
-test('Template nota_examen', () => {
+test('Template nota_examen', async () => {
     const context = {
         examen: 'Examen',
         nombre: 'Nombre Estudiante',
@@ -71,5 +72,37 @@ pero gracias a los puntos extra que te ganaste en los cuestionarios, tu nota fin
 ${context.correcciones}`;
 
     changeStubBehaviourToAssertContent(subject, text, html);
-    mailer.sendExamFeedback(context, TEST_USER_EMAIL);
+    await mailer.sendExamFeedback(context, TEST_USER_EMAIL);
+});
+
+test('Template summary_grades', async () => {
+    const context = {
+        estudiante: 'Borja',
+        padron: '123',
+        ejercicios: [
+            { nombre: 'Ej1', nota: '6' },
+            { nombre: 'Ej2', nota: '8' },
+        ],
+        promedio_ejercicios: '7',
+        parcial: '2',
+        primer_recu: '2',
+        segundo_recu: '10',
+        parcial_final: '10',
+        promedio_ej_y_parcial: '8',
+        tp_integrador: '8',
+        punto_extra_papers: '',
+        punto_adicional: '',
+        nota_cursada: '7',
+        nota_cursada_final: '7',
+        condicion_final: 'A Final' as const,
+        fecha_finales: ['Martes 2 de Julio a las 18:00 hs'],
+        fecha_final_promociones: 'Martes 2 de Julio a las 18:00 hs',
+        curso: 'Ingeniería de Software I',
+    };
+    const subject = `Resumen de cursada - Padrón ${context.padron}`;
+    const text = `Mail para ${context.estudiante}.`;
+    const html = `<p>Mail para ${context.estudiante}.</p>`;
+
+    changeStubBehaviourToAssertContent(subject, text, html);
+    await mailer.sendSummaryFeedback(context, TEST_USER_EMAIL);
 });

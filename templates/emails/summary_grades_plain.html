@@ -1,0 +1,64 @@
+{% extends "emails/layout/html_layout.html" %}
+
+{% block content %}
+Mail para {{ estudiante|title }}.
+
+Buenas!
+Te pasamos un resumen de tu cuatrimestre en {{ curso }}:
+
+Ejercicios
+{% for ejercicio in ejercicios %}
+- {{ ejercicio.name }}: {{ ejercicio.grade }}
+{% endfor %}
+
+Promedio de los ejercicios: {{ promedio_ejercicios }}
+
+
+Parcial
+- Parcial: {{ parcial }}
+{% if primer_recu != "" %}
+- 1er Recu: {{ primer_recu }}
+{% endif %}
+{% if segundo_recu != "" %}
+- 2do Recu: {{ segundo_recu }}
+{% endif %}
+Nota Final Parcial: {{ parcial_final }}
+
+
+TP Integrador
+Nota: {{ tp_integrador }}
+
+Nota cursada: {{ nota_cursada}} 
+{% if punto_extra_papers != "" %}
+Punto extra papers: {{ punto_extra_papers}} 
+{% endif %}
+{% if punto_adicional != "" %}
+Punto adicional: {{ punto_adicional}} 
+{% endif %}
+Nota cursada final: {{ nota_cursada_final }} 
+
+{% if condicion_final == "Recursa" %}
+Como ya estarás al tanto, tus resultados en el parcial y sus recuperatorios no fueron suficientes para aprobar la cursada de la materia. Lamentamos mucho esta situación y esperamos verte de nuevo el próximo cuatrimestre para revisitar los conceptos de la materia, reforzando todo lo que haya faltado este cuatrimestre.
+{% endif %}
+
+{% if condicion_final == "Promociona" %}
+Desde el equipo de {{ curso }} queremos felicitarte por haber promocionado la materia.
+Para terminar con la cursada, necesitamos que te inscribas a través del SIU Guaraní a alguna de las fechas de final (preferentemente la próxima, el {{ fecha_final_promociones }}), para que allí podamos asentar tu nota. No hace falta que vengas a la facultad ese día, nos alcanza con que te inscribas a través del SIU.
+Si no estás conforme con tu nota y preferís rendir el examen final, por favor respondé a este mail avisándonos, así te esperamos para rendir en la fecha que te anotes.
+{% endif %}
+
+{% if condicion_final == "A Final" %}
+Desde el equipo de {{ curso }} queremos felicitarte por haber aprobado la cursada.
+Para terminar con la materia falta que rindas el examen final, que consistirá de un oral acerca de las lecturas obligatorias de la materia y un repaso sobre los ejercicios que hiciste durante la cursada. Si tu idea es rendirlo este cuatrimestre, necesitamos que te inscribas a través del SIU Guaraní a alguna de las fechas de final y vengas presencialmente a la facultad tal y como hiciste para rendir los parciales. Recordá que las inscripciones a cada mesa de examen cierran 72 horas hábiles antes de la misma.
+
+Las fechas para este cuatrimestre son:
+{% for fecha_final in fecha_finales %}
+- {{ fecha_final }}
+{% endfor %}
+{% endif %}
+
+Como siempre, estamos a disposición por mail o en Discord para cualquier consulta.
+¡Saludos!
+El equipo docente
+
+{% endblock %}

@@ -1,6 +1,7 @@
 import { Api } from '../../app/interface/api';
 import { Request } from '../../app/interface/request';
 import { Response } from '../../app/interface/response';
+import { NoMailerClient } from '../../app/production/no-mailer-client';
 import { Assigner } from '../../app/system/assigner';
 import { Mailer } from '../../app/system/mailer';
 import * as constants from '../constants';
@@ -81,7 +82,7 @@ test('Send exercise feedback', async () => {
     });
     assertErrorResponse(errorResponse);
 
-    mailerClientStub.changeBehaviour(async () => {});
+    mailerClientStub.changeBehaviour(async () => 'ok');
     const okResponse = await api.sendExerciseFeedbackHandler({ ...params });
     assertOkResponse(okResponse);
 });
@@ -107,7 +108,7 @@ test('Send exam feedback', async () => {
     const errorResponse = await api.sendExamFeedbackHandler({ ...params });
     assertErrorResponse(errorResponse);
 
-    mailerClientStub.changeBehaviour(async () => {});
+    mailerClientStub.changeBehaviour(async () => 'ok');
     const okResponse = await api.sendExamFeedbackHandler({ ...params });
     assertOkResponse(okResponse);
 });
@@ -287,6 +288,47 @@ test('Get content from page', async () => {
 
 test("Get teachers' emails", async () => {
     const okResponse = await api.getTeachersEmailsHandler({});
+    assertOkResponse(okResponse);
+    assert(okResponse.message.length > 0);
+});
+
+test("Send summary' feedbacks", async () => {
+    const payload = {
+        to: 'mbacigalupo@fi.uba.ar',
+        context: {
+            curso: 'Ingeniería de Software I',
+            padron: 103715,
+            estudiante: 'BACIGALUPO, MATIAS',
+            ejercicios: [
+                { nombre: 'Combatientes Fantásticos', nota: 7 },
+                { nombre: 'Números', nota: 10 },
+                { nombre: 'Mars rover', nota: 6 },
+                { nombre: 'Servicios Financieros', nota: 10 },
+            ],
+            promedio_ejercicios: 8.25,
+            parcial: 6,
+            primer_recu: '',
+            segundo_recu: '',
+            parcial_final: 6,
+            promedio_ej_y_parcial: 7.125,
+            tp_integrador: 7,
+            punto_extra_papers: 0.5,
+            punto_adicional: 0.5,
+            nota_cursada: 8,
+            nota_cursada_final: 8,
+            condicion_final: 'Promociona',
+            fecha_finales: [
+                'Viernes 12 de Julio, a las 17.00',
+                'Martes 16 de Julio, a las 18.00',
+                'Martes 23 de Julio, a las 18.00',
+                'Martes 30 de Julio, a las 18.00',
+            ],
+            fecha_final_promociones: 'Viernes 12 de Julio, a las 17.00',
+        },
+    };
+    const mailerClient = new NoMailerClient();
+    mailerClientStub.changeBehaviour(mailerClient.sendMail);
+    const okResponse = await api.sendSummaryFeedbackHandler(payload);
     assertOkResponse(okResponse);
     assert(okResponse.message.length > 0);
 });

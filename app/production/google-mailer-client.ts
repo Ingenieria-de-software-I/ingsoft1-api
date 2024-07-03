@@ -5,7 +5,7 @@ import { MailerClient, Options } from '../system/mailer';
 
 const OAuth2 = google.auth.OAuth2;
 
-export class RealMailerClient implements MailerClient {
+export class GoogleMailerClient implements MailerClient {
     _transporter?: Promise<nodemailer.Transporter>;
 
     constructor(
@@ -14,6 +14,7 @@ export class RealMailerClient implements MailerClient {
             clientId: string;
             clientSecret: string;
             refreshToken: string;
+            replyTo: string;
         },
     ) {}
 
@@ -61,7 +62,16 @@ export class RealMailerClient implements MailerClient {
     }
 
     async sendMail(to: string, options: Options) {
-        const transporter = await this._getTransporter();
-        await transporter.sendMail({ to, ...options });
+        try {
+            const transporter = await this._getTransporter();
+            await transporter.sendMail({
+                to,
+                replyTo: this._config.replyTo,
+                ...options,
+            });
+        } catch (error) {
+            return String(error);
+        }
+        return 'ok';
     }
 }

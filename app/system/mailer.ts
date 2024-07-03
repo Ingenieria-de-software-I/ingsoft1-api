@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import { default as nunjucks } from 'nunjucks';
+import path from 'path';
 
 export type Options = {
     subject: string;
@@ -9,7 +10,7 @@ export type Options = {
 };
 
 export interface MailerClient {
-    sendMail(to: string, options: Options): Promise<void>;
+    sendMail(to: string, options: Options): Promise<string>;
 }
 
 type ExerciseFeedbackContext = {
@@ -31,14 +32,42 @@ type ExamFeedbackContext = {
     nota_final: string;
 };
 
+type Ejercicio = {
+    nota: string;
+    nombre: string;
+};
+
+type SummaryFeedbackContext = {
+    curso: string;
+    padron: string;
+    estudiante: string;
+    ejercicios: Ejercicio[];
+    promedio_ejercicios: string;
+    parcial: string;
+    primer_recu: string;
+    segundo_recu: string;
+    parcial_final: string;
+    promedio_ej_y_parcial: string;
+    tp_integrador: string;
+    punto_extra_papers: string;
+    punto_adicional: string;
+    nota_cursada: string;
+    nota_cursada_final: string;
+    condicion_final: string; // 'Promociona' | 'A Final' | 'Recursa'
+    fecha_finales: string[];
+    fecha_final_promociones: string;
+};
+
 type Mail<Context> = { to: string; context: Context };
 
 export type MailExerciseFeedback = Mail<ExerciseFeedbackContext>;
 
 export type MailExamFeedback = Mail<ExamFeedbackContext>;
 
+export type MailSummaryFeedback = Mail<SummaryFeedbackContext>;
+
 const env = nunjucks
-    .configure('templates')
+    .configure(path.join(process.cwd(), 'templates'))
     .addFilter('md', marked.parse)
     .addFilter('as_grade_str', (grade) => {
         const grade_as_number = Number(grade);
@@ -49,13 +78,10 @@ const env = nunjucks
     });
 
 export class Mailer {
-    constructor(
-        private _mailerClient: MailerClient,
-        private _replyTo?: string,
-    ) {}
+    constructor(private _mailerClient: MailerClient) {}
 
     private async _sendMail(to: string, options: Options) {
-        await this._mailerClient.sendMail(to, options);
+        return this._mailerClient.sendMail(to, options);
     }
 
     private _render(name: string, context: object) {
@@ -68,13 +94,12 @@ export class Mailer {
         const subject = `Correción de ejercicio ${context.ejercicio} - Grupo ${context.grupo}`;
         const text = this._render(`emails/notas_ejercicio_plain.html`, context);
         const html = this._render(`emails/notas_ejercicio.html`, context);
-        const replyTo = this._replyTo;
-        return { subject, text, html, replyTo };
+        return { subject, text, html };
     }
 
-    async sendExerciseFeedback(context: ExerciseFeedbackContext, to: string) {
+    sendExerciseFeedback(context: ExerciseFeedbackContext, to: string) {
         const options = this._buildMailOptionsForExerciseFeedback(context);
-        await this._sendMail(to, options);
+        return this._sendMail(to, options);
     }
 
     private _buildMailOptionsForExamFeedback(
@@ -83,12 +108,25 @@ export class Mailer {
         const subject = `Corrección de ${context.examen} - Padrón ${context.padron}`;
         const text = this._render(`emails/notas_examen_plain.html`, context);
         const html = this._render(`emails/notas_examen.html`, context);
-        const replyTo = this._replyTo;
-        return { subject, text, html, replyTo };
+        return { subject, text, html };
     }
 
-    async sendExamFeedback(context: ExamFeedbackContext, to: string) {
+    sendExamFeedback(context: ExamFeedbackContext, to: string) {
         const options = this._buildMailOptionsForExamFeedback(context);
-        await this._sendMail(to, options);
+        return this._sendMail(to, options);
+    }
+
+    private _buildMailOptionsForSummaryFeedback(
+        context: SummaryFeedbackContext,
+    ): Options {
+        const subject = `Resumen de cursada - Padrón ${context.padron}`;
+        const text = this._render(`emails/summary_grades_plain.html`, context);
+        const html = this._render(`emails/summary_grades.html`, context);
+        return { subject, text, html };
+    }
+
+    sendSummaryFeedback(context: SummaryFeedbackContext, to: string) {
+        const options = this._buildMailOptionsForSummaryFeedback(context);
+        return this._sendMail(to, options);
     }
 }

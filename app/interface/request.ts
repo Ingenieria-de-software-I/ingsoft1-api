@@ -1,6 +1,7 @@
 export class Request {
     private _partial: string;
     private _json: string;
+    private _errors: Error[] = [];
 
     constructor(partial: unknown) {
         this._json = JSON.stringify(partial);
@@ -14,10 +15,12 @@ export class Request {
                 throw new Error(`Value: ${value}`);
             }
             return value;
-        } catch (error) {
-            throw new Error(
+        } catch (catchedError) {
+            const newError = new Error(
                 Request.missingPropertyErrorMessage(property, this._json),
             );
+            this._errors.push(newError);
+            throw newError;
         }
     }
 
@@ -28,6 +31,10 @@ export class Request {
     map<T>(property: string, cb: (req: Request) => T): Array<T> {
         const arr = this._getValue(property) as Array<unknown>;
         return arr.map((val) => cb(new Request(val)));
+    }
+
+    hasRaised(error: unknown) {
+        return this._errors.some((err) => err === error);
     }
 
     static missingPropertyErrorMessage(property: string, json: string) {
