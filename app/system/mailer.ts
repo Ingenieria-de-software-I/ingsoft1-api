@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import { default as nunjucks } from 'nunjucks';
+import path from 'path';
 
 export type Options = {
     subject: string;
@@ -66,7 +67,7 @@ export type MailExamFeedback = Mail<ExamFeedbackContext>;
 export type MailSummaryFeedback = Mail<SummaryFeedbackContext>;
 
 const env = nunjucks
-    .configure('templates')
+    .configure(path.join(process.cwd(), 'templates'))
     .addFilter('md', marked.parse)
     .addFilter('as_grade_str', (grade) => {
         const grade_as_number = Number(grade);
