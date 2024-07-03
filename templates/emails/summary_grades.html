@@ -25,11 +25,17 @@
 <li><b>Nota Final Parcial:</b> {{ parcial_final }}</li>
 <br>
 
-{% if punto_adicional != "" %}
-<p><b>Nota cursada + Punto adicional:</b> {{ nota_cursada }} + {{ punto_adicional }} = {{ nota_cursada_final }}</p>
-{% else %}
-<p><b>Nota cursada:</b> {{ nota_cursada_final }}</p>
+<h2>TP Integrador</h2>
+<p><b>Nota: {{ tp_integrador }}</b></p>
+
+<p> Nota cursada: {{ nota_cursada}} </p>
+{% if punto_extra_papers != "" %}
+<p> Punto extra papers: {{ punto_extra_papers}} </p>
 {% endif %}
+{% if punto_adicional != "" %}
+<p> Punto adicional: {{ punto_adicional}} </p>
+{% endif %}
+<p> Nota cursada final: {{ nota_cursada_final }} </p>
 
 {% if condicion_final == "Recursa" %}
 <p>Como ya estarás al tanto, tus resultados en el parcial y sus recuperatorios no fueron suficientes para aprobar la cursada de la materia. Lamentamos mucho esta situación y esperamos verte de nuevo el próximo cuatrimestre para revisitar los conceptos de la materia, reforzando todo lo que haya faltado este cuatrimestre.</p>

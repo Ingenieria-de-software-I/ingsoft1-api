@@ -38,8 +38,8 @@ type Ejercicio = {
 
 type SummaryFeedbackContext = {
     curso: string;
-    estudiante: string;
     padron: string;
+    estudiante: string;
     ejercicios: Ejercicio[];
     promedio_ejercicios: string;
     parcial: string;
@@ -47,11 +47,14 @@ type SummaryFeedbackContext = {
     segundo_recu: string;
     parcial_final: string;
     promedio_ej_y_parcial: string;
+    tp_integrador: string;
+    punto_extra_papers: string;
     punto_adicional: string;
     nota_cursada: string;
     nota_cursada_final: string;
     condicion_final: string; // 'Promociona' | 'A Final' | 'Recursa'
     fecha_finales: string[];
+    fecha_final_promociones: string;
 };
 
 type Mail<Context> = { to: string; context: Context };

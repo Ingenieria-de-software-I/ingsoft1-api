@@ -43,6 +43,10 @@ export class Api {
                 promedio_ej_y_parcial: request.parseString(
                     'context.promedio_ej_y_parcial',
                 ),
+                tp_integrador: request.parseString('context.tp_integrador'),
+                punto_extra_papers: request.parseString(
+                    'context.punto_extra_papers',
+                ),
                 punto_adicional: request.parseString('context.punto_adicional'),
                 nota_cursada: request.parseString('context.nota_cursada'),
                 nota_cursada_final: request.parseString(
@@ -51,6 +55,9 @@ export class Api {
                 condicion_final: request.parseString('context.condicion_final'),
                 fecha_finales: request.map('context.fecha_finales', (req) =>
                     req.parseString('toString()'),
+                ),
+                fecha_final_promociones: request.parseString(
+                    'context.fecha_final_promociones',
                 ),
             },
         };

@@ -8,10 +8,11 @@ Te pasamos un resumen de tu cuatrimestre en {{ curso }}:
 
 Ejercicios
 {% for ejercicio in ejercicios %}
-- {{ ejercicio.nombre }}: {{ ejercicio.nota }}
+- {{ ejercicio.name }}: {{ ejercicio.grade }}
 {% endfor %}
 
 Promedio de los ejercicios: {{ promedio_ejercicios }}
+
 
 Parcial
 - Parcial: {{ parcial }}
@@ -24,15 +25,20 @@ Parcial
 Nota Final Parcial: {{ parcial_final }}
 
 
-{% if punto_adicional != "" %}
-Nota cursada + Punto adicional: {{ nota_cursada }} + {{ punto_adicional }} = {{ nota_cursada_final }}
-{% else %}
-Nota cursada: {{ nota_cursada_final }}
+TP Integrador
+Nota: {{ tp_integrador }}
+
+Nota cursada: {{ nota_cursada}} 
+{% if punto_extra_papers != "" %}
+Punto extra papers: {{ punto_extra_papers}} 
 {% endif %}
+{% if punto_adicional != "" %}
+Punto adicional: {{ punto_adicional}} 
+{% endif %}
+Nota cursada final: {{ nota_cursada_final }} 
 
 {% if condicion_final == "Recursa" %}
 Como ya estarás al tanto, tus resultados en el parcial y sus recuperatorios no fueron suficientes para aprobar la cursada de la materia. Lamentamos mucho esta situación y esperamos verte de nuevo el próximo cuatrimestre para revisitar los conceptos de la materia, reforzando todo lo que haya faltado este cuatrimestre.
-
 {% endif %}
 
 {% if condicion_final == "Promociona" %}
@@ -49,7 +55,6 @@ Las fechas para este cuatrimestre son:
 {% for fecha_final in fecha_finales %}
 - {{ fecha_final }}
 {% endfor %}
-
 {% endif %}
 
 Como siempre, estamos a disposición por mail o en Discord para cualquier consulta.
