@@ -1,4 +1,4 @@
-import { Api } from '../interface/api';
+import { Api } from '../rest/api';
 import { Assigner } from '../system/assigner';
 import { Mailer } from '../system/mailer';
 import { NoMailerClient } from './no-mailer-client';

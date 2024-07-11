@@ -1,13 +1,13 @@
 import { Client } from '@notionhq/client';
-
-import { Database } from '../persistance/notion/database';
 import {
+    Database,
+    Identificable,
     RelationWithManyProperty,
     RelationWithOneProperty,
+    Schema,
     TitleProperty,
-} from '../persistance/notion/properties';
-import { Schema } from '../persistance/notion/schema';
-import { Identificable } from '../persistance/notion/types';
+} from 'dbotion';
+
 import {
     Assignment,
     Config,

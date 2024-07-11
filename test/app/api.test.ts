@@ -1,7 +1,7 @@
-import { Api } from '../../app/interface/api';
-import { Request } from '../../app/interface/request';
-import { Response } from '../../app/interface/response';
 import { NoMailerClient } from '../../app/production/no-mailer-client';
+import { Api } from '../../app/rest/api';
+import { Request } from '../../app/rest/request';
+import { Response } from '../../app/rest/response';
 import { Assigner } from '../../app/system/assigner';
 import { Mailer } from '../../app/system/mailer';
 import * as constants from '../constants';

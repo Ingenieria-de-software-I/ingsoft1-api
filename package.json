@@ -21,6 +21,7 @@
   "dependencies": {
     "@notionhq/client": "^2.2.14",
     "axios": "^1.6.2",
+    "dbotion": "^0.0.8",
     "googleapis": "^128.0.0",
     "marked": "^11.1.0",
     "nodemailer": "^6.9.7",
