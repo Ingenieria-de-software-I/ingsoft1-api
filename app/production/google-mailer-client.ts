@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 import { default as nodemailer } from 'nodemailer';
 
-import { MailerClient, Options } from '../services/mailer';
+import { MailerClient, Options } from '../services/mailer.js';
 
 const OAuth2 = google.auth.OAuth2;
 

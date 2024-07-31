@@ -1,13 +1,14 @@
-import { NoMailerClient } from '../../app/production/no-mailer-client';
-import { Api } from '../../app/rest/api';
-import { Request } from '../../app/rest/request';
-import { Response } from '../../app/rest/response';
-import { Assigner } from '../../app/services/assigner';
-import { Mailer } from '../../app/services/mailer';
-import * as constants from '../constants';
-import { MailerClientStub } from '../helpers/mailer-client-stub';
-import { RepositoryFactoryStub } from '../helpers/repository-factory-stub';
-import { assert, createTestSuite } from '../utils';
+import { NoMailerClient } from '../../app/production/no-mailer-client.js';
+import { Api } from '../../app/rest/api.js';
+import { Request } from '../../app/rest/request.js';
+import { Response } from '../../app/rest/response.js';
+import { Assigner } from '../../app/services/assigner.js';
+import { Mailer } from '../../app/services/mailer.js';
+import { PageExtractor } from '../../app/services/page-extrator.js';
+import * as constants from '../constants.js';
+import { MailerClientStub } from '../helpers/mailer-client-stub.js';
+import { RepositoryFactoryStub } from '../helpers/repository-factory-stub.js';
+import { assert, createTestSuite } from '../utils.js';
 
 const [test, xtest] = createTestSuite('Api');
 
@@ -21,6 +22,7 @@ test.before(() => {
     api = new Api({
         mailer: new Mailer(mailerClientStub),
         assigner: new Assigner(repositoryFactory),
+        extractor: new PageExtractor(),
     });
 });
 
@@ -282,8 +284,8 @@ test('Get content from page', async () => {
         },
         page_id: constants.TEST_NOTION_BLOCK_ID,
     });
-    //assertOkResponse(response);
-    //assert(response.message.length > 0);
+    assertOkResponse(response);
+    assert(response.message.length > 0);
 });
 
 test("Get teachers' emails", async () => {
@@ -294,11 +296,11 @@ test("Get teachers' emails", async () => {
 
 test("Send summary' feedbacks", async () => {
     const payload = {
-        to: 'mbacigalupo@fi.uba.ar',
+        to: 'bg@fi.uba.ar',
         context: {
             curso: 'Ingeniería de Software I',
-            padron: 103715,
-            estudiante: 'BACIGALUPO, MATIAS',
+            padron: 69,
+            estudiante: 'Garibotti, Borja',
             ejercicios: [
                 { nombre: 'Combatientes Fantásticos', nota: 7 },
                 { nombre: 'Números', nota: 10 },

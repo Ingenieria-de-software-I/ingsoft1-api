@@ -1,4 +1,4 @@
-import { MailerClient, Options } from '../services/mailer';
+import { MailerClient, Options } from '../services/mailer.js';
 
 export class NoMailerClient implements MailerClient {
     async sendMail(to: string, options: Options) {

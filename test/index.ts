@@ -1,6 +1,7 @@
-import './app/api.test';
-import './app/mailer.test';
-// import './app/notion.test';
-import { runTests } from './utils';
+import './app/api.test.js';
+import './app/mailer.test.js';
+import './app/notion.test.js';
+import './app/page-extrator.test.js';
+import { runTests } from './utils.js';
 
 runTests();

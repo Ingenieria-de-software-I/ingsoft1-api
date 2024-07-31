@@ -1,5 +1,5 @@
-import { Request } from './request';
-import { Response } from './response';
+import { Request } from './request.js';
+import { Response } from './response.js';
 
 export default function handler(
     callback: (req: Request) => Promise<string>,
