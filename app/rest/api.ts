@@ -1,20 +1,22 @@
 import axios from 'axios';
 
-import { Assigner, Assignment, Config } from '../services/assigner';
-import { Mailer } from '../services/mailer';
+import { Assigner, Assignment, Config } from '../services/assigner.js';
 import {
     ExamFeedbackMail,
     ExerciseFeedbackMail,
+    Mailer,
     SummaryFeedbackMail,
-} from '../services/mailer';
-import handler from './handler';
-import { Request } from './request';
+} from '../services/mailer.js';
+import { PageExtractor } from '../services/page-extrator.js';
+import handler from './handler.js';
+import { Request } from './request.js';
 
 export class Api {
     constructor(
         private _services: {
             mailer: Mailer;
             assigner: Assigner;
+            extractor: PageExtractor;
         },
     ) {}
 
@@ -125,8 +127,8 @@ export class Api {
 
     getContentFromPageHandler = handler(async (request) => {
         const token = request.parseString('notion.token');
-        const blockId = request.parseString('page_id');
-        return '';
+        const pageId = request.parseString('page_id');
+        return await this._services.extractor.extract(pageId, token);
     });
 
     getTeachersEmailsHandler = handler(async () => {

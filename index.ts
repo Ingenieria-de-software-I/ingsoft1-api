@@ -1,3 +1,3 @@
 import 'dotenv/config';
 
-import './test';
+import './test/index.js';

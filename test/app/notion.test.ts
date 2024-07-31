@@ -1,17 +1,15 @@
 import { Client } from '@notionhq/client';
 
-import { NotionRepositoryFactory } from '../../app/production/notion-repository-factory';
-import * as constants from '../constants';
-import { createTestSuite } from '../utils';
+import { NotionRepositoryFactory } from '../../app/production/notion-repository-factory.js';
+import * as constants from '../constants.js';
+import { createTestSuite } from '../utils.js';
 
 const [test, xtest] = createTestSuite('Notion');
 
 let client: Client;
-let block_id: string;
 
 test.before(() => {
     client = new Client({ auth: constants.TEST_NOTION_TOKEN });
-    block_id = constants.TEST_NOTION_BLOCK_ID;
 });
 
 test('Test Real Repository', async () => {

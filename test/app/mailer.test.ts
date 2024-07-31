@@ -1,7 +1,7 @@
-import { Mailer } from '../../app/services/mailer';
-import { TEST_USER_EMAIL } from '../constants';
-import { MailerClientStub } from '../helpers/mailer-client-stub';
-import { assert, createTestSuite } from '../utils';
+import { Mailer } from '../../app/services/mailer.js';
+import { TEST_USER_EMAIL } from '../constants.js';
+import { MailerClientStub } from '../helpers/mailer-client-stub.js';
+import { assert, createTestSuite } from '../utils.js';
 
 const [test, xtest] = createTestSuite('Mailer');
 
