@@ -1,4 +1,4 @@
-import { Mailer } from '../../app/system/mailer';
+import { Mailer } from '../../app/services/mailer';
 import { TEST_USER_EMAIL } from '../constants';
 import { MailerClientStub } from '../helpers/mailer-client-stub';
 import { assert, createTestSuite } from '../utils';

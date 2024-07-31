@@ -1,4 +1,4 @@
-import { Identificable } from '../persistance/notion/types';
+import { Identificable } from 'dbotion';
 
 export type Assignment = {
     nombre: string;

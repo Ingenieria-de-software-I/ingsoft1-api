@@ -2,7 +2,7 @@ import {
     Config,
     Repository,
     RepositoryFactory,
-} from '../../app/system/assigner';
+} from '../../app/services/assigner';
 
 export class RepositoryFactoryStub implements RepositoryFactory {
     forExam(config: Config): Repository {

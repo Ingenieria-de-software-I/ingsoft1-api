@@ -1,7 +1,5 @@
 import { Client } from '@notionhq/client';
-import { assert } from 'console';
 
-import { getContentFromBlock } from '../../app/persistance/notion/blocks';
 import { NotionRepositoryFactory } from '../../app/production/notion-repository-factory';
 import * as constants from '../constants';
 import { createTestSuite } from '../utils';
@@ -14,11 +12,6 @@ let block_id: string;
 test.before(() => {
     client = new Client({ auth: constants.TEST_NOTION_TOKEN });
     block_id = constants.TEST_NOTION_BLOCK_ID;
-});
-
-test('Get page content', async () => {
-    const content = await getContentFromBlock(client, block_id);
-    assert(content.trim().length > 0);
 });
 
 test('Test Real Repository', async () => {

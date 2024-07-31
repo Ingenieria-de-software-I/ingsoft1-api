@@ -60,11 +60,11 @@ type SummaryFeedbackContext = {
 
 type Mail<Context> = { to: string; context: Context };
 
-export type MailExerciseFeedback = Mail<ExerciseFeedbackContext>;
+export type ExerciseFeedbackMail = Mail<ExerciseFeedbackContext>;
 
-export type MailExamFeedback = Mail<ExamFeedbackContext>;
+export type ExamFeedbackMail = Mail<ExamFeedbackContext>;
 
-export type MailSummaryFeedback = Mail<SummaryFeedbackContext>;
+export type SummaryFeedbackMail = Mail<SummaryFeedbackContext>;
 
 const env = nunjucks
     .configure(path.join(process.cwd(), 'templates'))

@@ -1,6 +1,6 @@
 import { Api } from '../rest/api';
-import { Assigner } from '../system/assigner';
-import { Mailer } from '../system/mailer';
+import { Assigner } from '../services/assigner';
+import { Mailer } from '../services/mailer';
 import { NoMailerClient } from './no-mailer-client';
 import { NotionRepositoryFactory } from './notion-repository-factory';
 

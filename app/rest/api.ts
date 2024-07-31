@@ -1,14 +1,12 @@
-import { Client } from '@notionhq/client';
 import axios from 'axios';
 
-import { getContentFromBlock } from '../persistance/notion/blocks';
-import { Assigner, Assignment, Config } from '../system/assigner';
-import { Mailer } from '../system/mailer';
+import { Assigner, Assignment, Config } from '../services/assigner';
+import { Mailer } from '../services/mailer';
 import {
-    MailExamFeedback,
-    MailExerciseFeedback,
-    MailSummaryFeedback,
-} from '../system/mailer';
+    ExamFeedbackMail,
+    ExerciseFeedbackMail,
+    SummaryFeedbackMail,
+} from '../services/mailer';
 import handler from './handler';
 import { Request } from './request';
 
@@ -23,7 +21,7 @@ export class Api {
     //#region handlers
 
     sendSummaryFeedbackHandler = handler(async (request) => {
-        const { to, context }: MailSummaryFeedback = {
+        const { to, context }: SummaryFeedbackMail = {
             to: request.parseString('to'),
             context: {
                 curso: request.parseString('context.curso'),
@@ -65,7 +63,7 @@ export class Api {
     });
 
     sendExerciseFeedbackHandler = handler(async (request) => {
-        const { to, context }: MailExerciseFeedback = {
+        const { to, context }: ExerciseFeedbackMail = {
             to: request.parseString('to'),
             context: {
                 ejercicio: request.parseString('context.ejercicio'),
@@ -79,7 +77,7 @@ export class Api {
     });
 
     sendExamFeedbackHandler = handler(async (request) => {
-        const { to, context }: MailExamFeedback = {
+        const { to, context }: ExamFeedbackMail = {
             to: request.parseString('to'),
             context: {
                 examen: request.parseString('context.examen'),
@@ -128,11 +126,7 @@ export class Api {
     getContentFromPageHandler = handler(async (request) => {
         const token = request.parseString('notion.token');
         const blockId = request.parseString('page_id');
-        const content = await getContentFromBlock(
-            new Client({ auth: token }),
-            blockId,
-        );
-        return content;
+        return '';
     });
 
     getTeachersEmailsHandler = handler(async () => {

@@ -16,7 +16,7 @@ import {
     Repository,
     RepositoryFactory,
     Teacher,
-} from '../system/assigner';
+} from '../services/assigner';
 
 export class NotionRepositoryFactory implements RepositoryFactory {
     forExercise(config: Config): Repository {
