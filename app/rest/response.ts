@@ -1,8 +1,8 @@
 export class Response {
-    constructor(public code: number, public message: string) {}
+    constructor(public code: number, public content: string) {}
 
     json() {
-        return JSON.parse(this.message);
+        return JSON.parse(this.content);
     }
 
     static ok(message: string): Response {

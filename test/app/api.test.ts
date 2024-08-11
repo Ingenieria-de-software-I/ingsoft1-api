@@ -285,13 +285,13 @@ test('Get content from page', async () => {
         page_id: constants.TEST_NOTION_BLOCK_ID,
     });
     assertOkResponse(response);
-    assert(response.message.length > 0);
+    assert(response.content.length > 0);
 });
 
 test("Get teachers' emails", async () => {
     const okResponse = await api.getTeachersEmailsHandler({});
     assertOkResponse(okResponse);
-    assert(okResponse.message.length > 0);
+    assert(okResponse.content.length > 0);
 });
 
 test("Send summary' feedbacks", async () => {
@@ -332,5 +332,5 @@ test("Send summary' feedbacks", async () => {
     mailerClientStub.changeBehaviour(mailerClient.sendMail);
     const okResponse = await api.sendSummaryFeedbackHandler(payload);
     assertOkResponse(okResponse);
-    assert(okResponse.message.length > 0);
+    assert(okResponse.content.length > 0);
 });

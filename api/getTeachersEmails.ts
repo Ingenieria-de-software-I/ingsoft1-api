@@ -4,5 +4,5 @@ import { api } from '../app/production/app.js';
 
 export default async function (req: VercelRequest, res: VercelResponse) {
     const response = await api.getTeachersEmailsHandler({});
-    res.status(response.code).send(response.message);
+    res.status(response.code).send(response.content);
 }
