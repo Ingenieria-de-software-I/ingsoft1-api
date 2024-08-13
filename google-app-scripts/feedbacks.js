@@ -34,7 +34,7 @@ class Feedback {
                     );
                     if (!row) return;
                     const response = this._api.getContentFromPage(
-                        this._config.token,
+                        this._config.notion,
                         feedback.id,
                     );
                     const content = response.getContentText();

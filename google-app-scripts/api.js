@@ -35,9 +35,9 @@ class Api {
 
     //#region  Descargar devoluciones
 
-    getContentFromPage(token, page_id) {
+    getContentFromPage(notion, page_id) {
         return this._post('/getContentFromPage', {
-            notion: { token },
+            notion,
             page_id,
         });
     }

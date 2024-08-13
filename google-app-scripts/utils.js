@@ -1,5 +1,6 @@
 function askForConfirmation(message, callback) {
     const ui = SpreadsheetApp.getUi();
+    Logger.log("Esperando a la confirmación del usuario...");
     const response = ui.alert(message, ui.ButtonSet.YES_NO);
     if (response != ui.Button.YES) {
         return;
