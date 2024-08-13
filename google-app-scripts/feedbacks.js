@@ -3,7 +3,7 @@ class Feedback {
         this._api = api;
         this._correctorsRange = correctorsRange;
         this._feedbacksRange = feedbacksRange;
-        this._notion = notion;
+        this._config = { notion };
     }
 
     assign(exerciseName, correctorsColumn) {
@@ -14,7 +14,7 @@ class Feedback {
                     exerciseName,
                     correctorsColumn,
                 );
-                this._sendAssignments(this._notion, assignments);
+                this._sendAssignments(this._config, assignments);
             },
         );
     }
@@ -25,7 +25,7 @@ class Feedback {
             () => {
                 const rows = this._getValuesFromRange(this._feedbacksRange);
 
-                const response = this._getFeedbacks(this._notion, exerciseName);
+                const response = this._getFeedbacks(this._config, exerciseName);
                 const feedbacks = JSON.parse(response.getContentText());
 
                 feedbacks.forEach((feedback) => {
@@ -34,7 +34,7 @@ class Feedback {
                     );
                     if (!row) return;
                     const response = this._api.getContentFromPage(
-                        this._notion.token,
+                        this._config.token,
                         feedback.id,
                     );
                     const content = response.getContentText();

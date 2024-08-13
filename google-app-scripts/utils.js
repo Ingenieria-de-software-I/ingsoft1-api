@@ -4,7 +4,7 @@ function askForConfirmation(message, callback) {
     if (response != ui.Button.YES) {
         return;
     }
-    _handle(callback());
+    _handle(callback);
 }
 
 function _handle(callback) {
