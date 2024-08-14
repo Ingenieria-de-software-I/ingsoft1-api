@@ -14,14 +14,14 @@ const exams = ['Parcial 1', 'Parcial 2'];
 
 function _assignExam(examNumber) {
     const examName = exams[examNumber - 1];
-    const teachersColumn = examNumber + 2;
-    examFeedback.assign(examName, teachersColumn);
+    const correctosColumn = examNumber + 2;
+    examFeedbacks.assign(examName, correctosColumn);
 }
 
 function _extractExamFeedbacks(examNumber) {
     const examName = exams[examNumber - 1];
-    const feedbackColumn = examNumber + 2;
-    examFeedback._extract(examName, feedbackColumn);
+    const feedbackColumn = 3 + 4 * (examNumber - 1);
+    examFeedbacks.extract(examName, feedbackColumn);
 }
 
 function _sendExamFeedbacks(examNumber) {

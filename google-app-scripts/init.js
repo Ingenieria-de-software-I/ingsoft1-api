@@ -16,14 +16,14 @@ const notionExerciseConfig = {
 
 const api = new Api(apiUrl);
 
-const examFeedback = new ExamFeedback(
+const examFeedbacks = new ExamFeedbacks(
     api,
     'DatosCorrectoresExamenes',
     'DatosDevolucionesExamenes',
     notionExamConfig,
 );
 
-const exerciseFeedback = new ExerciseFeedback(
+const exerciseFeedbacks = new ExerciseFeedbacks(
     api,
     'DatosCorrectoresEjercicios',
     'DatosDevolucionesEjercicios',

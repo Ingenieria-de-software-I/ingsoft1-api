@@ -34,14 +34,14 @@ const exercises = [
 
 function _assignExercise(exerciseNumber) {
     const exerciseName = exercises[exerciseNumber - 1];
-    const teachersColumn = exerciseNumber;
-    exerciseFeedback.assign(exerciseName, teachersColumn);
+    const correctorsColumn = exerciseNumber;
+    exerciseFeedbacks.assign(exerciseName, correctorsColumn);
 }
 
 function _extractExerciseFeedbacks(exerciseNumber) {
     const exerciseName = exercises[exerciseNumber - 1];
-    const feedbackColumn = exerciseNumber + 2;
-    exerciseFeedback._extract(exerciseName, feedbackColumn);
+    const feedbackColumn = 2 + 4 * (exerciseNumber - 1);
+    exerciseFeedbacks.extract(exerciseName, feedbackColumn);
 }
 
 function _sendExerciseFeedbacks(exerciseNumber) {
