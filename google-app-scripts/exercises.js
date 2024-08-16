@@ -11,7 +11,7 @@ const descargarDevolucionCodigoRepetido = () => _extractExerciseFeedbacks(1);
 const descargarDevolucionNumeros = () => _extractExerciseFeedbacks(2);
 const descargarDevolucionMarsRover1 = () => _extractExerciseFeedbacks(3);
 const descargarDevolucionServiciosFinancieros = () =>
-    _extractExerciseFeedbacks(4);
+  _extractExerciseFeedbacks(4);
 const descargarDevolucionMarsRover2 = () => _extractExerciseFeedbacks(5);
 const descargarDevolucionTusLibros = () => _extractExerciseFeedbacks(6);
 
@@ -24,26 +24,26 @@ const enviarDevolucionMarsRover2 = () => _sendExerciseFeedbacks(5);
 const enviarDevolucionTusLibros = () => _sendExerciseFeedbacks(6);
 
 const exercises = [
-    'Código Repetido',
-    'Números',
-    'Mars Rover 1',
-    'Servicios Financieros',
-    'Mars Rover 2',
-    'Tus Libros',
+  'Código Repetido',
+  'Números',
+  'Mars Rover 1',
+  'Servicios Financieros',
+  'Mars Rover 2',
+  'Tus Libros',
 ];
 
 function _assignExercise(exerciseNumber) {
-    const exerciseName = exercises[exerciseNumber - 1];
-    const correctorsColumn = exerciseNumber;
-    exerciseFeedbacks.assign(exerciseName, correctorsColumn);
+  const exerciseName = exercises[exerciseNumber - 1];
+  const correctorsColumn = exerciseNumber;
+  exerciseFeedbacks.assign(exerciseName, correctorsColumn);
 }
 
 function _extractExerciseFeedbacks(exerciseNumber) {
-    const exerciseName = exercises[exerciseNumber - 1];
-    const feedbackColumn = 2 + 4 * (exerciseNumber - 1);
-    exerciseFeedbacks.extract(exerciseName, feedbackColumn);
+  const exerciseName = exercises[exerciseNumber - 1];
+  const feedbackColumn = 2 + 4 * (exerciseNumber - 1);
+  exerciseFeedbacks.extract(exerciseName, feedbackColumn);
 }
 
 function _sendExerciseFeedbacks(exerciseNumber) {
-    const exerciseName = exercises[exerciseNumber - 1];
+  const exerciseName = exercises[exerciseNumber - 1];
 }
