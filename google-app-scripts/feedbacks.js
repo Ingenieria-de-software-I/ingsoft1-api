@@ -7,6 +7,7 @@ class Feedbacks {
     this._correctorsRange = correctorsRange;
     this._feedbacksRange = feedbacksRange;
     this._config = { notion };
+
     this._correctorsOffset = 0;
     this._gradeOffset = 1;
     this._detailsOffest = 2;
@@ -168,7 +169,7 @@ class Feedbacks {
 class ExerciseFeedbacks extends Feedbacks {
   _initialize() {
     this._groupNumberCol = 0;
-    this._emailsCol = 2;
+    this._emailsCol = 1;
   }
 
   _sendAssignments(config, assignments) {

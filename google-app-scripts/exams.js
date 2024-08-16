@@ -26,4 +26,6 @@ function _extractExamFeedbacks(examNumber) {
 
 function _sendExamFeedbacks(examNumber) {
   const examName = exams[examNumber - 1];
+  const feedbackColumn = 3 + 4 * (examNumber - 1);
+  examFeedbacks.send(examName, feedbackColumn);
 }

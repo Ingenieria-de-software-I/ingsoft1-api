@@ -13,7 +13,9 @@ class Api {
       method: 'post',
       contentType: 'application/json',
       payload: JSON.stringify(data),
+      //muteHttpExceptions: false,
     };
+    Logger.log(JSON.stringify(options, null, 2));
     const response = UrlFetchApp.fetch(url, options);
     const statusCode = response.getResponseCode();
     const content = response.getContentText();

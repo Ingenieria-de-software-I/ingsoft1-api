@@ -46,4 +46,6 @@ function _extractExerciseFeedbacks(exerciseNumber) {
 
 function _sendExerciseFeedbacks(exerciseNumber) {
   const exerciseName = exercises[exerciseNumber - 1];
+  const feedbackColumn = 2 + 4 * (exerciseNumber - 1);
+  exerciseFeedbacks.send(exerciseName, feedbackColumn);
 }
