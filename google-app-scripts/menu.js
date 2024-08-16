@@ -4,7 +4,7 @@ function onOpen() {
   const menu = ui.createMenu('Ing Soft 1');
   menu.addSubMenu(_menuDeCarga(ui));
   menu.addSubMenu(_menuDeDescarga(ui));
-  menu.addSubMenu(menuDeEnvio(ui));
+  menu.addSubMenu(_menuDeEnvio(ui));
   menu.addToUi();
 }
 
