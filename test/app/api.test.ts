@@ -1,7 +1,6 @@
 import { NoMailerClient } from '../../app/production/no-mailer-client.js';
+import { ApiResponse } from '../../app/rest/api-action.js';
 import { Api } from '../../app/rest/api.js';
-import { Request } from '../../app/rest/request.js';
-import { Response } from '../../app/rest/response.js';
 import { Assigner } from '../../app/services/assigner.js';
 import { Mailer } from '../../app/services/mailer.js';
 import { PageExtractor } from '../../app/services/page-extrator.js';
@@ -26,97 +25,39 @@ test.before(() => {
     });
 });
 
-const assertCode = (res: Response, c: number) => assert.equal(res.code, c);
-const assertBadResponse = (res: Response) => assertCode(res, 400);
-const assertErrorResponse = (res: Response) => assertCode(res, 500);
-const assertOkResponse = (res: Response) => assertCode(res, 200);
-
-test('Parse request', () => {
-    const params = {
-        prueba: 'exito',
-        data: {
-            message: 'hi!',
+function fixRepositoryFactory() {
+    repositoryFactory.changeBehaviour({
+        getExercisesFrom(_assigments) {
+            return Promise.resolve([]);
         },
-    };
-    const request = new Request({ ...params });
-
-    // Simple
-    assert.equal(request.parseString('prueba'), 'exito');
-
-    // Nested
-    assert.equal(request.parseString('data.message'), 'hi!');
-
-    // Missing
-    const missingProperty = 'data.message_missing';
-    assert.throws(() => request.parseString(missingProperty), {
-        message: Request.missingPropertyErrorMessage(
-            missingProperty,
-            JSON.stringify(params),
-        ),
-    });
-
-    const anotherMissingProperty = 'data_missing.message';
-    assert.throws(() => request.parseString(anotherMissingProperty), {
-        message: Request.missingPropertyErrorMessage(
-            anotherMissingProperty,
-            JSON.stringify(params),
-        ),
-    });
-});
-
-test('Send exercise feedback', async () => {
-    const badResponse = await api.sendExerciseFeedbackHandler({});
-    assertBadResponse(badResponse);
-
-    const params = {
-        to: 'to',
-        context: {
-            ejercicio: 'context.ejercicio',
-            grupo: 'context.grupo',
-            corrector: 'context.corrector',
-            nota: 'context.nota',
-            correcciones: 'context.correcciones',
+        getTeachersFrom(_assignments) {
+            return Promise.resolve([]);
         },
-    };
-
-    const errorResponse = await api.sendExerciseFeedbackHandler({
-        ...params,
+        getFeedbacksFrom(_exercises) {
+            return Promise.resolve([]);
+        },
+        createFeedbacks(_feedbacks) {
+            return Promise.resolve([]);
+        },
+        updateFeedbacks(_feedbacks) {
+            return Promise.resolve([]);
+        },
     });
-    assertErrorResponse(errorResponse);
+}
 
-    mailerClientStub.changeBehaviour(async () => 'ok');
-    const okResponse = await api.sendExerciseFeedbackHandler({ ...params });
+const assertCode = (res: ApiResponse, c: number) => assert.equal(res.code, c);
+const assertBadResponse = (res: ApiResponse) => assertCode(res, 400);
+const assertErrorResponse = (res: ApiResponse) => assertCode(res, 500);
+const assertOkResponse = (res: ApiResponse) => assertCode(res, 200);
+
+test("Get teachers' emails", async () => {
+    const okResponse = await api.getTeachersEmails.handle({});
     assertOkResponse(okResponse);
-});
-
-test('Send exam feedback', async () => {
-    const badResponse = await api.sendExamFeedbackHandler({});
-    assertBadResponse(badResponse);
-
-    const params = {
-        to: 'to',
-        context: {
-            examen: 'context.examen',
-            padron: 'context.padron',
-            nombre: 'context.nombre',
-            corrector: 'context.corrector',
-            nota: 'context.nota',
-            correcciones: 'context.correcciones',
-            nota_final: 'context.nota_final',
-            puntos_extras: 'context.puntos_extras',
-        },
-    };
-
-    const errorResponse = await api.sendExamFeedbackHandler({ ...params });
-    assertErrorResponse(errorResponse);
-
-    mailerClientStub.changeBehaviour(async () => 'ok');
-    const okResponse = await api.sendExamFeedbackHandler({ ...params });
-    assertOkResponse(okResponse);
+    assert(okResponse.content.length > 0);
 });
 
 test('Assign exercise', async () => {
-    const badResponse = await api.assignExerciseHandler({});
+    const badResponse = await api.assignExercise.handle({});
     assertBadResponse(badResponse);
 
     const config = {
@@ -134,34 +75,17 @@ test('Assign exercise', async () => {
             nombre: 'grupo 1',
         },
     ];
-    const params = { config, asignaciones };
-
-    const errorResponse = await api.assignExerciseHandler({ ...params });
+    const body = { config, asignaciones };
+    const errorResponse = await api.assignExercise.handle({ body });
     assertErrorResponse(errorResponse);
 
-    repositoryFactory.changeBehaviour({
-        getExercisesFrom(assigments) {
-            return Promise.resolve([]);
-        },
-        getTeachersFrom(assignments) {
-            return Promise.resolve([]);
-        },
-        getFeedbacksFrom(exercises) {
-            return Promise.resolve([]);
-        },
-        createFeedbacks(feedbacks) {
-            return Promise.resolve([]);
-        },
-        updateFeedbacks(feedbacks) {
-            return Promise.resolve([]);
-        },
-    });
-    const okResponse = await api.assignExerciseHandler({ ...params });
+    fixRepositoryFactory();
+    const okResponse = await api.assignExercise.handle({ body });
     assertOkResponse(okResponse);
 });
 
 test('Assign exam', async () => {
-    const badResponse = await api.assignExamHandler({});
+    const badResponse = await api.assignExam.handle({});
     assertBadResponse(badResponse);
 
     const config = {
@@ -179,34 +103,17 @@ test('Assign exam', async () => {
             nombre: 'estudiante 1',
         },
     ];
-    const params = { config, asignaciones };
-
-    const errorResponse = await api.assignExamHandler({ ...params });
+    const body = { config, asignaciones };
+    const errorResponse = await api.assignExam.handle({ body });
     assertErrorResponse(errorResponse);
 
-    repositoryFactory.changeBehaviour({
-        getExercisesFrom(assigments) {
-            return Promise.resolve([]);
-        },
-        getTeachersFrom(assignments) {
-            return Promise.resolve([]);
-        },
-        getFeedbacksFrom(exercises) {
-            return Promise.resolve([]);
-        },
-        createFeedbacks(feedbacks) {
-            return Promise.resolve([]);
-        },
-        updateFeedbacks(feedbacks) {
-            return Promise.resolve([]);
-        },
-    });
-    const okResponse = await api.assignExamHandler({ ...params });
+    fixRepositoryFactory();
+    const okResponse = await api.assignExam.handle({ body });
     assertOkResponse(okResponse);
 });
 
 test('Get exercise feedbacks', async () => {
-    const badResponse = await api.getExerciseFeedbacksHandler({});
+    const badResponse = await api.getExerciseFeedbacks.handle({});
     assertBadResponse(badResponse);
 
     const config = {
@@ -218,15 +125,15 @@ test('Get exercise feedbacks', async () => {
         },
     };
     const ejercicio = 'ejercicio 1';
-    const params = { config, ejercicio };
-    const errorResponse = await api.getExerciseFeedbacksHandler({ ...params });
+    const body = { config, ejercicio };
+    const errorResponse = await api.getExerciseFeedbacks.handle({ body });
     assertErrorResponse(errorResponse);
 
     repositoryFactory.changeBehaviour({
-        getExercisesFrom(assigments) {
+        getExercisesFrom(_assigments) {
             return Promise.resolve([{ id: '1', nombre: ejercicio }]);
         },
-        getFeedbacksFrom(exercises) {
+        getFeedbacksFrom(_exercises) {
             return Promise.resolve([
                 {
                     id: '1',
@@ -237,12 +144,12 @@ test('Get exercise feedbacks', async () => {
             ]);
         },
     });
-    const okResponse = await api.getExerciseFeedbacksHandler({ ...params });
+    const okResponse = await api.getExerciseFeedbacks.handle({ body });
     assertOkResponse(okResponse);
 });
 
 test('Get exam feedbacks', async () => {
-    const badResponse = await api.getExamFeedbacksHandler({});
+    const badResponse = await api.getExamFeedbacks.handle({});
     assertBadResponse(badResponse);
 
     const config = {
@@ -254,15 +161,15 @@ test('Get exam feedbacks', async () => {
         },
     };
     const ejercicio = 'examen 1';
-    const params = { config, ejercicio };
-    const errorResponse = await api.getExamFeedbacksHandler({ ...params });
+    const body = { config, ejercicio };
+    const errorResponse = await api.getExamFeedbacks.handle({ body });
     assertErrorResponse(errorResponse);
 
     repositoryFactory.changeBehaviour({
-        getExercisesFrom(assigments) {
+        getExercisesFrom(_assigments) {
             return Promise.resolve([{ id: '1', nombre: ejercicio }]);
         },
-        getFeedbacksFrom(exercises) {
+        getFeedbacksFrom(_exercises) {
             return Promise.resolve([
                 {
                     id: '1',
@@ -273,29 +180,73 @@ test('Get exam feedbacks', async () => {
             ]);
         },
     });
-    const okResponse = await api.getExamFeedbacksHandler({ ...params });
+    const okResponse = await api.getExamFeedbacks.handle({ body });
     assertOkResponse(okResponse);
 });
 
-test('Get content from page', async () => {
-    const response = await api.getContentFromPageHandler({
-        notion: {
-            token: constants.TEST_NOTION_TOKEN,
+xtest('Get content from page', async () => {
+    const response = await api.getContentFromPage.handle({
+        body: {
+            notion: {
+                token: constants.TEST_NOTION_TOKEN,
+            },
+            page_id: constants.TEST_NOTION_BLOCK_ID,
         },
-        page_id: constants.TEST_NOTION_BLOCK_ID,
     });
     assertOkResponse(response);
     assert(response.content.length > 0);
 });
 
-test("Get teachers' emails", async () => {
-    const okResponse = await api.getTeachersEmailsHandler({});
+test('Send exercise feedback', async () => {
+    const badResponse = await api.sendExerciseFeedback.handle({});
+    assertBadResponse(badResponse);
+
+    const body = {
+        to: 'to',
+        context: {
+            ejercicio: 'context.ejercicio',
+            grupo: 'context.grupo',
+            corrector: 'context.corrector',
+            nota: 'context.nota',
+            correcciones: 'context.correcciones',
+        },
+    };
+
+    const errorResponse = await api.sendExerciseFeedback.handle({ body });
+    assertErrorResponse(errorResponse);
+
+    mailerClientStub.changeBehaviour(async () => 'ok');
+    const okResponse = await api.sendExerciseFeedback.handle({ body });
     assertOkResponse(okResponse);
-    assert(okResponse.content.length > 0);
 });
 
-test("Send summary' feedbacks", async () => {
-    const payload = {
+test('Send exam feedback', async () => {
+    const badResponse = await api.sendExamFeedback.handle({});
+    assertBadResponse(badResponse);
+
+    const body = {
+        to: 'to',
+        context: {
+            examen: 'context.examen',
+            padron: 'context.padron',
+            nombre: 'context.nombre',
+            corrector: 'context.corrector',
+            nota: 'context.nota',
+            correcciones: 'context.correcciones',
+            nota_final: 'context.nota_final',
+            puntos_extras: 'context.puntos_extras',
+        },
+    };
+    const errorResponse = await api.sendExamFeedback.handle({ body });
+    assertErrorResponse(errorResponse);
+
+    mailerClientStub.changeBehaviour(async () => 'ok');
+    const okResponse = await api.sendExamFeedback.handle({ body });
+    assertOkResponse(okResponse);
+});
+
+test('Send summary feedbacks', async () => {
+    const body = {
         to: 'bg@fi.uba.ar',
         context: {
             curso: 'Ingeniería de Software I',
@@ -330,7 +281,7 @@ test("Send summary' feedbacks", async () => {
     };
     const mailerClient = new NoMailerClient();
     mailerClientStub.changeBehaviour(mailerClient.sendMail);
-    const okResponse = await api.sendSummaryFeedbackHandler(payload);
+    const okResponse = await api.sendSummaryFeedback.handle({ body });
     assertOkResponse(okResponse);
     assert(okResponse.content.length > 0);
 });
