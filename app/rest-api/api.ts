@@ -39,8 +39,12 @@ export class Api {
                 },
                 servers: [
                     {
-                        url: 'https://ingsoft1-api.vercel.app',
+                        url: 'https://ingsoft1-api.vercel.app/api',
                         description: 'Main server',
+                    },
+                    {
+                        url: 'http://localhost:3000/api',
+                        description: 'Localhost (Vercel:Dev)',
                     },
                 ],
             });
