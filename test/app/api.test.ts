@@ -1,6 +1,7 @@
+import { ApiResponse } from '@borjagaribotti/open-api';
+
 import { NoMailerClient } from '../../app/production/no-mailer-client.js';
-import { ApiResponse } from '../../app/rest/api-action.js';
-import { Api } from '../../app/rest/api.js';
+import { Api } from '../../app/rest-api/api.js';
 import { Assigner } from '../../app/services/assigner.js';
 import { Mailer } from '../../app/services/mailer.js';
 import { PageExtractor } from '../../app/services/page-extrator.js';
