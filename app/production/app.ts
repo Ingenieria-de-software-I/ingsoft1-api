@@ -1,4 +1,4 @@
-import { Api } from '../rest/api.js';
+import { Api } from '../rest-api/api.js';
 import { Assigner } from '../services/assigner.js';
 import { Mailer } from '../services/mailer.js';
 import { PageExtractor } from '../services/page-extrator.js';
