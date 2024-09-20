@@ -141,10 +141,8 @@ class Feedbacks {
     let { to, options } = JSON.parse(details);
     const { subject, text, html } = options;
 
-    to = 'mgaribotti@fi.uba.ar';
-
     GmailApp.sendEmail(to, subject, text, {
-      //cc: EMAIL_DOCENTES,
+      cc: EMAIL_DOCENTES,
       replyTo: EMAIL_DOCENTES,
       name: NOMBRE_EMISOR,
       htmlBody: html,
