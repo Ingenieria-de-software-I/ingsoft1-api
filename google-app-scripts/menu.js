@@ -20,7 +20,7 @@ function _menuDeDescarga(ui) {
 
 function _menuDeEnvio(ui) {
   const menu = ui.createMenu('Enviar emails');
-  return _agregarEjercciosYExamenes(menu, 'sendEmail');
+  return _agregarEjercciosYExamenes(menu, 'enviarDevolucion');
 }
 function _agregarEjercciosYExamenes(menu, fnPrefix) {
   exercises.concat(exams).forEach((name) => {
