@@ -10,7 +10,7 @@ class Feedbacks {
 
     this._correctorsOffset = 0;
     this._gradeOffset = 1;
-    this._detailsOffest = 2;
+    this._detailsOffset = 2;
     this._sentOffset = 3;
     this._sentLabel = 'YES';
     this._initialize();
@@ -37,7 +37,8 @@ class Feedbacks {
     askForConfirmation(
       `¿Quiere descargar las correcciones de ${exerciseName}?`,
       () => {
-        const rows = this._getValuesFromRange(this._feedbacksRange);
+        const rows = this._getRowsFromRange(this._feedbacksRange);
+        const detailsOffset = feedbackColumn + this._detailsOffset;
 
         const response = this._getFeedbacks(this._config, exerciseName);
         const feedbacks = JSON.parse(response.getContentText());
@@ -59,10 +60,10 @@ class Feedbacks {
             content,
           );
           const details = detailsResponse.getContentText();
-          row[feedbackColumn + this._detailsOffest] = details;
+          row[detailsOffset] = details;
         });
 
-        this._setValuesForRange(this._feedbacksRange, rows);
+        this._updateColumnFromRange(this._feedbacksRange, rows, detailsOffset);
       },
     );
   }
@@ -71,10 +72,10 @@ class Feedbacks {
     askForConfirmation(
       `¿Quiere enviar las correcciones de ${exerciseName}?`,
       () => {
-        const rows = this._getValuesFromRange(this._feedbacksRange);
+        const rows = this._getRowsFromRange(this._feedbacksRange);
 
         rows.forEach((row) => {
-          const details = row[feedbackColumn + this._detailsOffest];
+          const details = row[feedbackColumn + this._detailsOffset];
           if (!details) return;
 
           if (this._wasSent(row, feedbackColumn)) return;
@@ -83,7 +84,11 @@ class Feedbacks {
           this._markAsSent(row, feedbackColumn);
         });
 
-        this._setValuesForRange(this._feedbacksRange, rows);
+        this._updateColumnFromRange(
+          this._feedbacksRange,
+          rows,
+          feedbackColumn + this._sentOffset,
+        );
       },
     );
   }
@@ -93,7 +98,7 @@ class Feedbacks {
   //#region Assignment
 
   _generateAssignments(exerciseName, correctorsColumn) {
-    const rows = this._getValuesFromRange(this._correctorsRange);
+    const rows = this._getRowsFromRange(this._correctorsRange);
     return rows.map((row) => ({
       nombre: this._getAssignmentName(row),
       docentes: this._splitNames(row[correctorsColumn]),
@@ -102,7 +107,7 @@ class Feedbacks {
   }
 
   _getAssignmentName(row) {
-    throw new Error('Subclass Resposability');
+    throw new Error('Subclass Responsibility');
   }
 
   _splitNames(names) {
@@ -110,7 +115,7 @@ class Feedbacks {
   }
 
   _sendAssignments(config, assignments) {
-    throw new Error('Subclass Resposability');
+    throw new Error('Subclass Responsibility');
   }
 
   //#endregion
@@ -118,7 +123,7 @@ class Feedbacks {
   //#region Extraction
 
   _getFeedbacks(config, exerciseName) {
-    throw new Error('Subclass Resposability');
+    throw new Error('Subclass Responsibility');
   }
 
   //#endregion
@@ -134,7 +139,7 @@ class Feedbacks {
   }
 
   _getEmailDetails(row, feedbackColumn, exerciseName, content) {
-    throw new Error('Subclass Resposability');
+    throw new Error('Subclass Responsibility');
   }
 
   _sendMail(details) {
@@ -153,12 +158,15 @@ class Feedbacks {
 
   //#region Data Manipulation
 
-  _getValuesFromRange(range) {
-    return SpreadsheetApp.getActiveSheet().getRange(range).getValues();
+  _getRowsFromRange(rangeName) {
+    return SpreadsheetApp.getActiveSheet().getRange(rangeName).getValues();
   }
 
-  _setValuesForRange(range, values) {
-    return SpreadsheetApp.getActiveSheet().getRange(range).setValues(values);
+  _updateColumnFromRange(rangeName, rows, column) {
+    const range = SpreadsheetApp.getActiveSheet().getRange(rangeName);
+    const newRange = range.offset(0, column, range.getNumRows(), 1);
+    const values = rows.map((row) => row.slice(column, column + 1));
+    newRange.setValues(values);
   }
 
   //#endregion
