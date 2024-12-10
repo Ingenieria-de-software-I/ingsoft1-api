@@ -5,6 +5,7 @@
     "test": "tsx index.ts",
     "check-format": "prettier --check .",
     "format": "prettier --write .",
+    "vercel:deploy": "vercel deploy --prod",
     "vercel:dev": "vercel dev"
   },
   "devDependencies": {
