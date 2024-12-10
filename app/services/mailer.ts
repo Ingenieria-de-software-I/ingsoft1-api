@@ -38,24 +38,21 @@ type Ejercicio = {
 };
 
 type SummaryFeedbackContext = {
-    curso: string;
-    padron: string;
     estudiante: string;
+    curso: string;
     ejercicios: Ejercicio[];
-    promedio_ejercicios: string;
-    parcial: string;
+    primer_parcial: string;
+    segundo_parcial: string;
     primer_recu: string;
     segundo_recu: string;
-    parcial_final: string;
-    promedio_ej_y_parcial: string;
     tp_integrador: string;
-    punto_extra_papers: string;
+    promedio_ej_y_parcial: string;
+    segundo_parcial_o_recu: string;
     punto_adicional: string;
-    nota_cursada: string;
     nota_cursada_final: string;
     condicion_final: string; // 'Promociona' | 'A Final' | 'Recursa'
-    fecha_finales: string[];
     fecha_final_promociones: string;
+    fecha_finales: string[];
 };
 
 type Mail<Context> = { to: string; context: Context };

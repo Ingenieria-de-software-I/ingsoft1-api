@@ -71,7 +71,7 @@ export const examFeedbackMailSchema = new Schema<ExamFeedbackMail>({
 export const summaryFeedbackMailSchema = new Schema<SummaryFeedbackMail>({
     to: new StringProperty(),
     context: new Schema({
-        condicion_final: new StringProperty(),
+        estudiante: new StringProperty(),
         curso: new StringProperty(),
         ejercicios: new ArrayProperty(
             new Schema({
@@ -79,20 +79,17 @@ export const summaryFeedbackMailSchema = new Schema<SummaryFeedbackMail>({
                 nota: new StringProperty(),
             }),
         ),
-        estudiante: new StringProperty(),
-        fecha_final_promociones: new StringProperty(),
-        fecha_finales: new ArrayProperty(new StringProperty()),
-        nota_cursada: new StringProperty(),
-        nota_cursada_final: new StringProperty(),
-        padron: new StringProperty(),
-        parcial: new StringProperty(),
-        parcial_final: new StringProperty(),
+        primer_parcial: new StringProperty(),
+        segundo_parcial: new StringProperty(),
         primer_recu: new StringProperty(),
-        promedio_ej_y_parcial: new StringProperty(),
-        promedio_ejercicios: new StringProperty(),
-        punto_adicional: new StringProperty(),
-        punto_extra_papers: new StringProperty(),
         segundo_recu: new StringProperty(),
         tp_integrador: new StringProperty(),
+        promedio_ej_y_parcial: new StringProperty(),
+        segundo_parcial_o_recu: new StringProperty(),
+        punto_adicional: new StringProperty(),
+        nota_cursada_final: new StringProperty(),
+        condicion_final: new StringProperty(),
+        fecha_final_promociones: new StringProperty(),
+        fecha_finales: new ArrayProperty(new StringProperty()),
     }),
 });

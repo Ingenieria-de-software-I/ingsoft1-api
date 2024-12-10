@@ -1,8 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "start": "npm t",
-    "test": "node --loader ts-node/esm index.ts",
+    "start": "yarn test",
+    "test": "tsx index.ts",
     "check-format": "prettier --check .",
     "format": "prettier --write .",
     "vercel:dev": "vercel dev"
@@ -17,7 +17,7 @@
     "baretest": "^2.0.0",
     "dotenv": "^16.3.1",
     "prettier": "2.8.4",
-    "ts-node": "^10.9.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.3.3",
     "vercel": "^35.2.2"
   },

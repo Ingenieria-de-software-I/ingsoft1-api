@@ -24,7 +24,10 @@ function _menuDeEnvio(ui) {
 }
 function _agregarEjerciciosYExamenes(menu, fnPrefix) {
   exercises.concat(exams).forEach((name) => {
-    const fnSuffix = name.replaceAll('ó', 'o').replaceAll('ú', 'u').replaceAll(' ', '');
+    const fnSuffix = name
+      .replaceAll('ó', 'o')
+      .replaceAll('ú', 'u')
+      .replaceAll(' ', '');
     menu.addItem(name, `${fnPrefix}${fnSuffix}`);
   });
   return menu;

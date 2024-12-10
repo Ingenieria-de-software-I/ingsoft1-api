@@ -78,28 +78,25 @@ ${context.correcciones}`;
 test('Template summary_grades', async () => {
     const context = {
         estudiante: 'Borja',
-        padron: '123',
+        curso: 'Ingeniería de Software I',
         ejercicios: [
-            { nombre: 'Ej1', nota: '6' },
-            { nombre: 'Ej2', nota: '8' },
+            { nombre: 'Ej1', nota: '4' },
+            { nombre: 'Ej2', nota: '4' },
         ],
-        promedio_ejercicios: '7',
-        parcial: '2',
+        primer_parcial: '4',
+        segundo_parcial: '2',
         primer_recu: '2',
-        segundo_recu: '10',
-        parcial_final: '10',
-        promedio_ej_y_parcial: '8',
-        tp_integrador: '8',
-        punto_extra_papers: '',
-        punto_adicional: '',
-        nota_cursada: '7',
-        nota_cursada_final: '7',
+        segundo_recu: '4',
+        tp_integrador: '4',
+        promedio_ej_y_parcial: '4',
+        segundo_parcial_o_recu: '2',
+        punto_adicional: '1',
+        nota_cursada_final: '5',
         condicion_final: 'A Final' as const,
         fecha_finales: ['Martes 2 de Julio a las 18:00 hs'],
         fecha_final_promociones: 'Martes 2 de Julio a las 18:00 hs',
-        curso: 'Ingeniería de Software I',
     };
-    const subject = `Resumen de cursada - Padrón ${context.padron}`;
+    const subject = `Resumen de cursada`;
     const text = `Mail para ${context.estudiante}.`;
     const html = `<p>Mail para ${context.estudiante}.</p>`;
 
