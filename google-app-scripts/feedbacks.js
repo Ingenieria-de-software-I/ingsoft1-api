@@ -1,9 +1,7 @@
-const EMAIL_DOCENTES = 'fiuba-ingsoft1-doc@googlegroups.com';
-const NOMBRE_EMISOR = 'Docentes IS1 - Leveroni';
-
 class Feedbacks {
-  constructor(api, correctorsRange, feedbacksRange, notion) {
+  constructor(api, mailer, correctorsRange, feedbacksRange, notion) {
     this._api = api;
+    this._mailer = mailer;
     this._correctorsRange = correctorsRange;
     this._feedbacksRange = feedbacksRange;
     this._config = { notion };
@@ -37,7 +35,7 @@ class Feedbacks {
     askForConfirmation(
       `¿Quiere descargar las correcciones de ${exerciseName}?`,
       () => {
-        const rows = this._getRowsFromRange(this._feedbacksRange);
+        const rows = getRowsFromRange(this._feedbacksRange);
         const detailsOffset = feedbackColumn + this._detailsOffset;
 
         const response = this._getFeedbacks(this._config, exerciseName);
@@ -63,7 +61,7 @@ class Feedbacks {
           row[detailsOffset] = details;
         });
 
-        this._updateColumnFromRange(this._feedbacksRange, rows, detailsOffset);
+        updateColumnFromRange(this._feedbacksRange, rows, detailsOffset);
       },
     );
   }
@@ -72,7 +70,7 @@ class Feedbacks {
     askForConfirmation(
       `¿Quiere enviar las correcciones de ${exerciseName}?`,
       () => {
-        const rows = this._getRowsFromRange(this._feedbacksRange);
+        const rows = getRowsFromRange(this._feedbacksRange);
 
         rows.forEach((row) => {
           const details = row[feedbackColumn + this._detailsOffset];
@@ -84,7 +82,7 @@ class Feedbacks {
           this._markAsSent(row, feedbackColumn);
         });
 
-        this._updateColumnFromRange(
+        updateColumnFromRange(
           this._feedbacksRange,
           rows,
           feedbackColumn + this._sentOffset,
@@ -98,7 +96,7 @@ class Feedbacks {
   //#region Assignment
 
   _generateAssignments(exerciseName, correctorsColumn) {
-    const rows = this._getRowsFromRange(this._correctorsRange);
+    const rows = getRowsFromRange(this._correctorsRange);
     return rows.map((row) => ({
       nombre: this._getAssignmentName(row),
       docentes: this._splitNames(row[correctorsColumn]),
@@ -145,28 +143,7 @@ class Feedbacks {
   _sendMail(details) {
     let { to, options } = JSON.parse(details);
     const { subject, text, html } = options;
-
-    GmailApp.sendEmail(to, subject, text, {
-      cc: EMAIL_DOCENTES,
-      replyTo: EMAIL_DOCENTES,
-      name: NOMBRE_EMISOR,
-      htmlBody: html,
-    });
-  }
-
-  //#endregion
-
-  //#region Data Manipulation
-
-  _getRowsFromRange(rangeName) {
-    return SpreadsheetApp.getActiveSheet().getRange(rangeName).getValues();
-  }
-
-  _updateColumnFromRange(rangeName, rows, column) {
-    const range = SpreadsheetApp.getActiveSheet().getRange(rangeName);
-    const newRange = range.offset(0, column, range.getNumRows(), 1);
-    const values = rows.map((row) => row.slice(column, column + 1));
-    newRange.setValues(values);
+    this._mailer.send(to, subject, text, html);
   }
 
   //#endregion

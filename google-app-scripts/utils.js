@@ -5,14 +5,22 @@ function askForConfirmation(message, callback) {
   if (response != ui.Button.YES) {
     return;
   }
-  _handle(callback);
-}
 
-function _handle(callback) {
   try {
     callback();
   } catch (ex) {
     const ui = SpreadsheetApp.getUi();
     ui.alert(ex.message);
   }
+}
+
+function getRowsFromRange(rangeName) {
+  return SpreadsheetApp.getActiveSheet().getRange(rangeName).getValues();
+}
+
+function updateColumnFromRange(rangeName, rows, column) {
+  const range = SpreadsheetApp.getActiveSheet().getRange(rangeName);
+  const newRange = range.offset(0, column, range.getNumRows(), 1);
+  const values = rows.map((row) => row.slice(column, column + 1));
+  newRange.setValues(values);
 }

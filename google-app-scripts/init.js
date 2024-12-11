@@ -1,3 +1,6 @@
+const emailName = 'Docentes IS1 - Leveroni';
+const emailDocentes = 'fiuba-ingsoft1-doc@googlegroups.com';
+
 const apiUrl = 'https://ingsoft1-api.vercel.app/api';
 const notionConfig = {
   token: '',
@@ -15,9 +18,11 @@ const notionExerciseConfig = {
 };
 
 const api = new Api(apiUrl);
+const mailer = new Mailer(emailName, emailDocentes);
 
 const examFeedbacks = new ExamFeedbacks(
   api,
+  mailer,
   'DatosCorrectoresExamenes',
   'DatosDevolucionesExamenes',
   notionExamConfig,
@@ -25,6 +30,7 @@ const examFeedbacks = new ExamFeedbacks(
 
 const exerciseFeedbacks = new ExerciseFeedbacks(
   api,
+  mailer,
   'DatosCorrectoresEjercicios',
   'DatosDevolucionesEjercicios',
   notionExerciseConfig,

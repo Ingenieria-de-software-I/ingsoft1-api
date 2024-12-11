@@ -64,8 +64,8 @@ class Api {
     return this._post('/sendExerciseFeedback', { to, context });
   }
 
-  sendSummaryFeedback(to, context) {
-    return this._post('/sendSummaryFeedback', { to, context });
+  sendSummaryGrades(to, context) {
+    return this._post('/sendSummaryGrades', { to, context });
   }
 
   //#endregion

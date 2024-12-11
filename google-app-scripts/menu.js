@@ -5,6 +5,7 @@ function onOpen() {
   menu.addSubMenu(_menuDeCarga(ui));
   menu.addSubMenu(_menuDeDescarga(ui));
   menu.addSubMenu(_menuDeEnvio(ui));
+  menu.addSubMenu(_menuDeResumenDeCursada(ui));
   menu.addToUi();
 }
 
@@ -22,6 +23,14 @@ function _menuDeEnvio(ui) {
   const menu = ui.createMenu('Enviar emails');
   return _agregarEjerciciosYExamenes(menu, 'enviarDevolucion');
 }
+
+function _menuDeResumenDeCursada(ui) {
+  return ui
+    .createMenu('Resumen de cursada')
+    .addItem('Generar resumenes', 'generarResumenesDeCursada')
+    .addItem('Enviar resumenes', 'enviarResumenesDeCursada');
+}
+
 function _agregarEjerciciosYExamenes(menu, fnPrefix) {
   exercises.concat(exams).forEach((name) => {
     const fnSuffix = name
