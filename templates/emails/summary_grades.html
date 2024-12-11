@@ -12,7 +12,6 @@
     <li><b>{{ ejercicio.nombre }}:</b> {{ ejercicio.nota }}</li>
     {% endfor %}
 </ul>
-<br>
 
 <h2>Parciales</h2>
 <ul>
@@ -25,11 +24,11 @@
     <li><b>2do Recu:</b> {{ segundo_recu }}</li>
     {% endif %}
 </ul>
-<br>
 
 <h2>TP Integrador</h2>
-<p><b>Nota final:</b>{{ tp_integrador }}</p>
-<br>
+<ul>
+    <li><b>Nota final:</b> {{ tp_integrador }}</li>
+</ul>
 
 <h2>Condición cursada</h2>
 <ul>
@@ -52,7 +51,7 @@
 {% if condicion_final == "Promociona" %}
 <p>Desde el equipo de {{ curso }} queremos felicitarte por haber promocionado la materia.</p>
 <p>Para terminar con la cursada, necesitamos que te inscribas a través del SIU Guaraní a alguna de las fechas de final
-    (preferentemente la próxima, el {{ fecha_final_promociones }}), para que allí podamos asentar tu nota. No hace falta
+    (preferentemente la próxima, el <b>{{ fecha_final_promociones }}</b>), para que allí podamos asentar tu nota. No hace falta
     que vengas a la facultad ese día, nos alcanza con que te inscribas a través del SIU.</p>
 <p>Si no estás conforme con tu nota y preferís rendir el examen final, por favor respondé a este mail avisándonos, así
     te esperamos para rendir en la fecha que te anotes.</p>
