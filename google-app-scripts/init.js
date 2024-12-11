@@ -35,3 +35,5 @@ const exerciseFeedbacks = new ExerciseFeedbacks(
   'DatosDevolucionesEjercicios',
   notionExerciseConfig,
 );
+
+const summaryGrades = new SummaryGrades(api, mailer, 'Notas!B3:AC39');
