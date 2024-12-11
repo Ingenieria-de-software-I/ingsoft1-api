@@ -37,7 +37,8 @@ type Ejercicio = {
     nombre: string;
 };
 
-type SummaryFeedbackContext = {
+type SummaryGradesContext = {
+    padron: string;
     estudiante: string;
     curso: string;
     ejercicios: Ejercicio[];
@@ -61,7 +62,7 @@ export type ExerciseFeedbackMail = Mail<ExerciseFeedbackContext>;
 
 export type ExamFeedbackMail = Mail<ExamFeedbackContext>;
 
-export type SummaryFeedbackMail = Mail<SummaryFeedbackContext>;
+export type SummaryGradesMail = Mail<SummaryGradesContext>;
 
 const env = nunjucks
     .configure(path.join(process.cwd(), 'templates'))
@@ -114,7 +115,7 @@ export class Mailer {
     }
 
     private _buildMailOptionsForSummaryFeedback(
-        context: SummaryFeedbackContext,
+        context: SummaryGradesContext,
     ): Options {
         const subject = `Resumen de cursada - Padrón ${context.padron}`;
         const text = this._render(`emails/summary_grades_plain.html`, context);
@@ -122,7 +123,7 @@ export class Mailer {
         return { subject, text, html };
     }
 
-    sendSummaryFeedback(context: SummaryFeedbackContext, to: string) {
+    sendSummaryGrades(context: SummaryGradesContext, to: string) {
         const options = this._buildMailOptionsForSummaryFeedback(context);
         return this._sendMail(to, options);
     }

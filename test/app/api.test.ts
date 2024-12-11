@@ -246,10 +246,11 @@ test('Send exam feedback', async () => {
     assertOkResponse(okResponse);
 });
 
-test('Send summary feedbacks', async () => {
+test('Send summary grades', async () => {
     const body = {
         to: 'bg@fi.uba.ar',
         context: {
+            padron: '123',
             estudiante: 'Borja',
             curso: 'Ingeniería de Software I',
             ejercicios: [
@@ -272,7 +273,7 @@ test('Send summary feedbacks', async () => {
     };
     const mailerClient = new NoMailerClient();
     mailerClientStub.changeBehaviour(mailerClient.sendMail);
-    const okResponse = await api.sendSummaryFeedback.handle({ body });
+    const okResponse = await api.sendSummaryGrades.handle({ body });
     assertOkResponse(okResponse);
     assert(okResponse.content.length > 0);
 });

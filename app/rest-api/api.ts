@@ -10,7 +10,7 @@ import {
     exerciseFeedbackMailSchema,
     feedbackRetrieveSchema,
     pageSchema,
-    summaryFeedbackMailSchema,
+    summaryGradesMailSchema,
 } from './schemas.js';
 
 export class Api {
@@ -150,12 +150,12 @@ export class Api {
         },
     });
 
-    sendSummaryFeedback = ApiAction.post({
+    sendSummaryGrades = ApiAction.post({
         summary: 'Genera el mail sobre el resumen de notas',
         description: 'El envio fue delegado a la planilla',
-        schema: summaryFeedbackMailSchema,
+        schema: summaryGradesMailSchema,
         callback: async ({ to, context }) => {
-            return await this._services.mailer.sendSummaryFeedback(context, to);
+            return await this._services.mailer.sendSummaryGrades(context, to);
         },
     });
 }

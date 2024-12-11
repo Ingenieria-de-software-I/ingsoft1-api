@@ -77,6 +77,7 @@ ${context.correcciones}`;
 
 test('Template summary_grades', async () => {
     const context = {
+        padron: '123',
         estudiante: 'Borja',
         curso: 'Ingeniería de Software I',
         ejercicios: [
@@ -96,10 +97,10 @@ test('Template summary_grades', async () => {
         fecha_finales: ['Martes 2 de Julio a las 18:00 hs'],
         fecha_final_promociones: 'Martes 2 de Julio a las 18:00 hs',
     };
-    const subject = `Resumen de cursada`;
+    const subject = `Resumen de cursada - Padrón ${context.padron}`;
     const text = `Mail para ${context.estudiante}.`;
     const html = `<p>Mail para ${context.estudiante}.</p>`;
 
     changeStubBehaviourToAssertContent(subject, text, html);
-    await mailer.sendSummaryFeedback(context, TEST_USER_EMAIL);
+    await mailer.sendSummaryGrades(context, TEST_USER_EMAIL);
 });

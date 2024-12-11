@@ -8,7 +8,7 @@ import { Assignment, Config } from '../services/assigner.js';
 import {
     ExamFeedbackMail,
     ExerciseFeedbackMail,
-    SummaryFeedbackMail,
+    SummaryGradesMail,
 } from '../services/mailer.js';
 
 const configSchema = new Schema<Config>({
@@ -68,9 +68,10 @@ export const examFeedbackMailSchema = new Schema<ExamFeedbackMail>({
     }),
 });
 
-export const summaryFeedbackMailSchema = new Schema<SummaryFeedbackMail>({
+export const summaryGradesMailSchema = new Schema<SummaryGradesMail>({
     to: new StringProperty(),
     context: new Schema({
+        padron: new StringProperty(),
         estudiante: new StringProperty(),
         curso: new StringProperty(),
         ejercicios: new ArrayProperty(
