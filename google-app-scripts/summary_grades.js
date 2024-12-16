@@ -86,11 +86,11 @@ class SummaryGrades {
         { nombre: 'Mars Rover 1', nota: row[this._offsets.mars_rover1] },
         {
           nombre: 'Servicios Financieros',
-          nota: this._offsets.servicios_financieros,
+          nota: row[this._offsets.servicios_financieros],
         },
         {
           nombre: 'Mars Rover 2 (El regreso)',
-          nota: this._offsets.mars_rover2,
+          nota: row[this._offsets.mars_rover2],
         },
       ],
       primer_parcial: row[this._offsets.primer_parcial],
